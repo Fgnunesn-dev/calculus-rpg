@@ -6,3 +6,9 @@ coverage/
 *.log
 .env*
 !.env.example
+data/private-files/
+data/legacy-private/
+data/tutor-conversations/
+data/documents.json
+public/s3-storage/
+public/assets/aistudio/CamScanner*.pdf

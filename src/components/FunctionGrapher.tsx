@@ -1,3 +1,4 @@
+import { compileMath } from '../lib/safeMath';
 import React, { useState, useMemo } from 'react';
 import { Eye, Activity } from 'lucide-react';
 import { MathView } from './MathView';
@@ -19,45 +20,8 @@ export const FunctionGrapher: React.FC<FunctionGrapherProps> = ({
   const [yMax, setYMax] = useState<number>(8);
   const [showTangent, setShowTangent] = useState<boolean>(true);
 
-  // Safe numerical evaluator for Calculus functions
-  const evalFunc = useMemo(() => {
-    return (x: number): number | null => {
-      try {
-        // Safe math context
-        const mathScope = {
-          x,
-          sin: Math.sin,
-          cos: Math.cos,
-          tan: Math.tan,
-          ln: Math.log,
-          log: Math.log10,
-          exp: Math.exp,
-          sqrt: Math.sqrt,
-          cbrt: Math.cbrt,
-          abs: Math.abs,
-          pi: Math.PI,
-          e: Math.E,
-        };
-
-        // Convert common notation (e.g. x^2 to Math.pow(x,2), sen to sin, tg to tan)
-        let sanitized = funcExpr
-          .replace(/sen\(/gi, 'sin(')
-          .replace(/tg\(/gi, 'tan(')
-          .replace(/(\d+)\s*x/g, '$1*x')
-          .replace(/x\^(\d+)/g, 'Math.pow(x, $1)')
-          .replace(/\^/g, '**');
-
-        const fn = new Function(...Object.keys(mathScope), `return ${sanitized};`);
-        const val = fn(...Object.values(mathScope));
-        if (typeof val === 'number' && !isNaN(val) && isFinite(val)) {
-          return val;
-        }
-        return null;
-      } catch {
-        return null;
-      }
-    };
-  }, [funcExpr]);
+  const parsed = useMemo(() => { try { return { fn: compileMath(funcExpr), error: '' }; } catch (err: any) { return { fn: (_x: number): number | null => null, error: err.message }; } }, [funcExpr]);
+  const evalFunc = parsed.fn;
 
   // Numerical derivative f'(x)
   const evalDeriv = useMemo(() => {
@@ -163,6 +127,8 @@ export const FunctionGrapher: React.FC<FunctionGrapherProps> = ({
           </select>
         </div>
       </div>
+
+      {parsed.error && <p role="alert" className="text-xs text-amber-300">{parsed.error}</p>}
 
       {/* SVG Canvas */}
       <div className="relative bg-[#090d16] border border-slate-800 rounded-xl overflow-hidden flex justify-center items-center">

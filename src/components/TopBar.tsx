@@ -14,16 +14,17 @@ export const TopBar: React.FC<TopBarProps> = ({ user, currentView, onNavigate })
   const xpPercent = Math.round((user.currentXp / user.nextLevelXp) * 100);
 
   const navItems = [
-    { id: 'command', label: 'Command Center' },
-    { id: 'arena', label: 'Learning Arena' },
-    { id: 'tutor', label: 'AI Tutor' },
-    { id: 'library', label: 'Documentos & S3' },
-    { id: 'diagnostic', label: 'Autópsia da Prova' },
+    { id: 'command', label: 'Painel' },
+    { id: 'planner', label: 'Organização' },
+    { id: 'arena', label: 'Arena' },
+    { id: 'tutor', label: 'Tutor' },
+    { id: 'library', label: 'Materiais' },
+    { id: 'diagnostic', label: 'Minhas provas' },
     { id: 'skills', label: 'Árvore de Talentos' },
   ];
 
   return (
-    <header className="sticky top-0 z-50 bg-[#0c1019]/90 backdrop-blur-md border-b border-slate-800/80 px-4 lg:px-8 py-3">
+    <header className="sticky top-0 z-50 bg-[#0c1019] border-b border-slate-800 px-4 lg:px-8 py-3">
       <div className="max-w-7xl mx-auto flex items-center justify-between gap-6">
         {/* Zone 1: Brand Wordmark */}
         <div className="flex items-center gap-3 shrink-0">
@@ -32,13 +33,13 @@ export const TopBar: React.FC<TopBarProps> = ({ user, currentView, onNavigate })
             onClick={() => onNavigate('command')} 
             className="flex items-center gap-2.5 text-left group"
           >
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-600 to-indigo-700 flex items-center justify-center text-white font-black text-sm shadow-md shadow-purple-900/30 group-hover:scale-105 transition-transform">
+            <div className="w-8 h-8 rounded-lg bg-teal-700 flex items-center justify-center text-white font-black text-sm shadow-md shadow-purple-900/30 group-hover:scale-105 transition-transform">
               ∫x
             </div>
             <div>
               <div className="text-base font-bold tracking-tight text-white font-display flex items-center gap-2 whitespace-nowrap">
                 CALCULUS RPG
-                <span className="text-[10px] font-mono font-semibold tracking-wider px-1.5 py-0.5 rounded bg-purple-950/80 text-purple-300 border border-purple-800/60">
+                <span className="hidden sm:inline text-[10px] font-mono font-semibold tracking-wider px-1.5 py-0.5 rounded bg-purple-950/80 text-purple-300 border border-purple-800/60">
                   UFBA MATA02
                 </span>
               </div>
@@ -47,7 +48,7 @@ export const TopBar: React.FC<TopBarProps> = ({ user, currentView, onNavigate })
         </div>
 
         {/* Zone 2: Clean 1-line Navigation Links */}
-        <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-slate-400">
+        <nav aria-label="Navegação principal" className="hidden 2xl:flex items-center gap-4 text-xs font-medium text-slate-400">
           {navItems.map((item) => {
             const isActive = currentView === item.id;
             return (
@@ -55,6 +56,7 @@ export const TopBar: React.FC<TopBarProps> = ({ user, currentView, onNavigate })
                 key={item.id}
                 type="button"
                 onClick={() => onNavigate(item.id)}
+                aria-current={isActive ? 'page' : undefined}
                 className={`whitespace-nowrap shrink-0 transition-colors py-1 ${
                   isActive
                     ? 'text-purple-400 border-b-2 border-purple-500 font-semibold'
@@ -85,7 +87,7 @@ export const TopBar: React.FC<TopBarProps> = ({ user, currentView, onNavigate })
           </div>
 
           {/* Level and XP Bar */}
-          <div className="flex items-center gap-2.5 bg-slate-900/90 border border-slate-800 px-3 py-1.5 rounded-lg">
+          <div className="hidden sm:flex items-center gap-2.5 bg-slate-900/90 border border-slate-800 px-3 py-1.5 rounded-lg">
             <div className="w-6 h-6 rounded-md bg-purple-900/60 border border-purple-600/40 flex items-center justify-center text-[11px] font-bold text-purple-200 font-mono">
               L{user.level}
             </div>
@@ -96,7 +98,7 @@ export const TopBar: React.FC<TopBarProps> = ({ user, currentView, onNavigate })
               </div>
               <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
                 <div 
-                  className="h-full bg-gradient-to-r from-purple-500 to-cyan-400 rounded-full transition-all duration-300"
+                  className="h-full bg-teal-400 rounded-full transition-all duration-300"
                   style={{ width: `${Math.min(100, xpPercent)}%` }}
                 />
               </div>
@@ -136,6 +138,9 @@ export const TopBar: React.FC<TopBarProps> = ({ user, currentView, onNavigate })
           )}
         </div>
       </div>
+      <nav aria-label="Navegação principal compacta" className="2xl:hidden flex gap-5 overflow-x-auto text-xs text-slate-400 mt-3 pt-3 border-t border-slate-800 pb-1">
+        {navItems.map(item => <button key={item.id} onClick={() => onNavigate(item.id)} aria-current={currentView === item.id ? 'page' : undefined} className={`shrink-0 pb-1 border-b-2 ${currentView === item.id ? 'text-teal-300 border-teal-400' : 'border-transparent hover:text-white'}`}>{item.label}</button>)}
+      </nav>
     </header>
   );
 };

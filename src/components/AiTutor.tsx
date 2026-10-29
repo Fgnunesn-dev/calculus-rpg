@@ -5,8 +5,16 @@ import {
 } from 'lucide-react';
 import { TutorChatMessage } from '../types/calculus';
 import { MathView } from './MathView';
+import { MathText } from './MathText';
+import { privateFetch } from '../lib/api';
+import { useAuth } from '../context/AuthContext';
 
 export const AiTutor: React.FC = () => {
+  const { currentUser } = useAuth();
+  const [historyLoading, setHistoryLoading] = useState(Boolean(currentUser));
+  const [historyError, setHistoryError] = useState<string | null>(null);
+  const [historyRetry, setHistoryRetry] = useState(0);
+  const sendingRef = useRef(false);
   const [activeMode, setActiveMode] = useState<'aprender' | 'praticar' | 'investigar_erro' | 'revisar' | 'desafio' | 'modo_prova'>('aprender');
   const [inputMessage, setInputMessage] = useState<string>('');
   const [isSending, setIsSending] = useState<boolean>(false);
@@ -16,22 +24,32 @@ export const AiTutor: React.FC = () => {
       id: 'msg-0',
       sender: 'tutor',
       mode: 'aprender',
-      content: `Olá, Fabricio! Sou o seu **Tutor de IA de Cálculo A**, alinhado ao programa oficial da **Profa. Graça Luzia Dominguez Santos** no IME/UFBA.
+      content: `Olá! Sou o seu **Tutor de IA de Cálculo A**, alinhado ao programa oficial da **Profa. Graça Luzia Dominguez Santos** no IME/UFBA.
 
-Estou com acesso às suas duas listas de exercícios, às notas de aula sobre variação de funções e à correção da sua 1ª Prova (onde identificamos pontos cruciais em limites com conjugado e continuidade).
+Posso ajudar com conceitos, exercícios e justificativas de cálculo. Envie sua prova na área Minhas provas para criar seu diagnóstico pessoal. Não presumo seu histórico nem resultados de avaliações.
 
 Como posso te guiar hoje? Você pode escolher um dos modos acima ou clicar em uma das dúvidas frequentes da disciplina.`,
       timestamp: '12:00',
       suggestedPrompts: [
         'Explique por que multiplicar pelo conjugado elimina a indeterminação [0/0] ou [∞ - ∞]',
         'Como provar que lim_{x->-infty} ln(...) * sen(x) = 0 pelo Teorema do Confronto?',
-        'Qual a diferença entre derivabilidade e continuidade na função por partes da Q4 da prova?',
-        'Como achar a reta tangente perpendicular a uma reta dada na Q3?'
+        'Qual a diferença entre derivabilidade e continuidade de uma função por partes?',
+        'Como achar uma reta tangente perpendicular a uma reta dada?'
       ]
     }
   ]);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!currentUser) return;
+    let active = true; setHistoryLoading(true); setHistoryError(null);
+    privateFetch('/api/tutor/history').then(async response => {
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || 'Falha ao carregar sua conversa.');
+      if (active && result.messages.length) setMessages(previous => [previous[0], ...result.messages.map((turn: TutorChatMessage) => ({ ...turn, timestamp: new Date(turn.timestamp).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) }))]);
+    }).catch(err => { if (active) setHistoryError(err.message); }).finally(() => { if (active) setHistoryLoading(false); });
+    return () => { active = false; };
+  }, [currentUser?.uid, historyRetry]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -43,7 +61,8 @@ Como posso te guiar hoje? Você pode escolher um dos modos acima ou clicar em um
 
   const handleSendMessage = async (textToSend?: string) => {
     const text = (textToSend || inputMessage).trim();
-    if (!text || isSending) return;
+    if (!text || sendingRef.current || historyLoading || historyError) return;
+    sendingRef.current = true;
 
     const userMsg: TutorChatMessage = {
       id: `msg-${Date.now()}`,
@@ -57,7 +76,7 @@ Como posso te guiar hoje? Você pode escolher um dos modos acima ou clicar em um
     setIsSending(true);
 
     try {
-      const response = await fetch('/api/tutor/chat', {
+      const response = await privateFetch('/api/tutor/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -69,6 +88,7 @@ Como posso te guiar hoje? Você pode escolher um dos modos acima ou clicar em um
       });
 
       const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Não foi possível conectar ao tutor.');
 
       const tutorMsg: TutorChatMessage = {
         id: `msg-${Date.now()}-reply`,
@@ -85,11 +105,12 @@ Como posso te guiar hoje? Você pode escolher um dos modos acima ou clicar em um
       const errorMsg: TutorChatMessage = {
         id: `msg-${Date.now()}-error`,
         sender: 'system',
-        content: 'Não foi possível conectar ao tutor de IA no momento. Verifique a conexão com o servidor.',
+        content: err.message || 'Não foi possível conectar ao tutor de IA no momento.',
         timestamp: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
       };
       setMessages(prev => [...prev, errorMsg]);
     } finally {
+      sendingRef.current = false;
       setIsSending(false);
     }
   };
@@ -105,6 +126,8 @@ Como posso te guiar hoje? Você pode escolher um dos modos acima ou clicar em um
 
   return (
     <div className="space-y-6 max-w-5xl mx-auto px-4 lg:px-8 py-6">
+      <p role="status" className="text-xs text-slate-400">{historyLoading ? 'Carregando sua conversa…' : currentUser ? 'Conversa salva na sua conta neste servidor. O tutor considera até 80 mensagens recentes, dentro do limite de contexto.' : 'Entre com Google para conversar e salvar seu histórico.'}</p>
+      {historyError && <div role="alert" className="text-sm text-amber-200 bg-amber-950/30 border border-amber-900 p-3 rounded-xl">{historyError}<button className="ml-3 underline" onClick={() => setHistoryRetry(n => n + 1)}>Tentar carregar novamente</button></div>}
       {/* Header */}
       <div className="bg-[#121828] border border-slate-800 p-5 rounded-2xl shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -113,7 +136,7 @@ Como posso te guiar hoje? Você pode escolher um dos modos acima ou clicar em um
               MENTORIA INTELIGENTE DE CÁLCULO A
             </span>
             <span className="text-xs text-slate-400">·</span>
-            <span className="text-xs text-slate-400 font-mono">Grounded nos Documentos da UFBA</span>
+            <span className="text-xs text-slate-400 font-mono">Resolução guiada e justificativas</span>
           </div>
           <h1 className="text-2xl font-bold text-white font-display">
             AI Tutor — Professor Particular
@@ -165,7 +188,7 @@ Como posso te guiar hoje? Você pode escolher um dos modos acima ou clicar em um
               >
                 {/* Avatar */}
                 {isTutor && (
-                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-600 to-indigo-700 flex items-center justify-center text-white shrink-0 shadow-md">
+                  <div className="w-8 h-8 rounded-lg bg-teal-700 flex items-center justify-center text-white shrink-0 shadow-md">
                     <Bot className="w-4 h-4" />
                   </div>
                 )}
@@ -187,7 +210,7 @@ Como posso te guiar hoje? Você pode escolher um dos modos acima ou clicar em um
                   )}
 
                   <div className="whitespace-pre-wrap space-y-2">
-                    {msg.content}
+                    <MathText text={msg.content} />
                   </div>
 
                   {msg.suggestedPrompts && (
@@ -203,7 +226,7 @@ Como posso te guiar hoje? Você pode escolher um dos modos acima ou clicar em um
                             onClick={() => handleSendMessage(prompt)}
                             className="text-left text-[11px] p-1.5 rounded-lg bg-slate-900/80 hover:bg-purple-950/70 border border-slate-700/60 text-slate-300 hover:text-purple-200 transition-colors"
                           >
-                            → {prompt}
+                            → <MathText text={prompt} />
                           </button>
                         ))}
                       </div>
@@ -238,13 +261,13 @@ Como posso te guiar hoje? Você pode escolher um dos modos acima ou clicar em um
               value={inputMessage}
               onChange={(e) => setInputMessage(e.target.value)}
               placeholder="Digite sua dúvida ou cole seu raciocínio passo a passo..."
-              disabled={isSending}
+              disabled={isSending || historyLoading || Boolean(historyError)}
               className="flex-1 bg-[#121828] border border-slate-700 rounded-xl px-4 py-2.5 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-purple-500 transition-colors"
             />
             <button
               type="submit"
               disabled={isSending || !inputMessage.trim()}
-              className="px-4 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 disabled:opacity-40 text-white rounded-xl shadow-md text-xs font-semibold flex items-center gap-1.5 transition-all"
+              className="px-4 py-2.5 bg-teal-700 hover:bg-teal-600 disabled:opacity-40 text-white rounded-xl shadow-md text-xs font-semibold flex items-center gap-1.5 transition-all"
             >
               <span>Enviar</span>
               <Send className="w-3.5 h-3.5" />

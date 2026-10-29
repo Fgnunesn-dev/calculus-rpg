@@ -1,3 +1,4 @@
+import { MathText } from './MathText';
 import React, { useState } from 'react';
 import { SkillNode, UserStats } from '../types/calculus';
 import { 
@@ -72,7 +73,7 @@ export const SkillTree: React.FC<SkillTreeProps> = ({ skills, user, onSelectSkil
               <div key={cat.id} className="bg-[#121828] border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
                 <div className="flex items-center justify-between border-b border-slate-800 pb-2">
                   <h2 className="text-sm font-bold text-slate-200 font-display flex items-center gap-2">
-                    <span className={`w-2.5 h-2.5 rounded-full bg-gradient-to-r ${cat.color}`} />
+                    <span className={`w-2.5 h-2.5 rounded-full bg-teal-400`} />
                     <span>{cat.title}</span>
                   </h2>
                   <span className="text-xs font-mono text-slate-500">
@@ -145,7 +146,7 @@ export const SkillTree: React.FC<SkillTreeProps> = ({ skills, user, onSelectSkil
             </div>
 
             <p className="text-xs text-slate-300 leading-relaxed">
-              {selectedSkill.description}
+              <MathText text={selectedSkill.description} />
             </p>
 
             {/* Metrics */}
@@ -205,7 +206,7 @@ export const SkillTree: React.FC<SkillTreeProps> = ({ skills, user, onSelectSkil
             <button
               type="button"
               onClick={() => onSelectSkillToPractice(selectedSkill.id)}
-              className="w-full py-2.5 px-4 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-semibold rounded-xl shadow-lg flex items-center justify-center gap-1.5 transition-transform active:scale-95"
+              className="w-full py-2.5 px-4 bg-teal-700 hover:bg-teal-600 text-white text-xs font-semibold rounded-xl shadow-lg flex items-center justify-center gap-1.5 transition-transform active:scale-95"
             >
               <Sparkles className="w-3.5 h-3.5 text-cyan-300" />
               <span>Treinar Habilidade na Arena</span>

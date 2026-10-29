@@ -68,6 +68,10 @@ service cloud.firestore {
       allow get: if isOwner(userId);
       allow create: if isOwner(userId) && isValidUserProfile(incoming()) && incoming().uid == userId;
       allow update: if isOwner(userId) && isValidUserProfile(incoming()) && incoming().uid == userId;
+      match /state/{stateId} {
+        allow read: if isOwner(userId);
+        allow create, update: if isOwner(userId) && stateId == 'planner' && incoming().keys().hasOnly(['plan', 'updatedAt']) && incoming().plan is map && incoming().updatedAt is string;
+      }
 
       // Subcollection: /users/{userId}/skills/{skillId}
       match /skills/{skillId} {
@@ -84,10 +88,10 @@ service cloud.firestore {
 
     // Collection: /documents/{documentId}
     match /documents/{documentId} {
-      allow get, list: if isSignedIn();
-      allow create: if isSignedIn() && isValidAcademicDocument(incoming());
-      allow update: if isSignedIn() && (resource.data.uploadedBy == request.auth.uid || request.auth.token.email == 'fg.gabriell13@gmail.com');
-      allow delete: if isSignedIn() && (resource.data.uploadedBy == request.auth.uid || request.auth.token.email == 'fg.gabriell13@gmail.com');
+      allow get, list: if isSignedIn() && resource.data.uploadedBy == request.auth.uid;
+      allow create: if isSignedIn() && incoming().uploadedBy == request.auth.uid && isValidAcademicDocument(incoming());
+      allow update: if isSignedIn() && resource.data.uploadedBy == request.auth.uid && incoming().uploadedBy == request.auth.uid && isValidAcademicDocument(incoming());
+      allow delete: if isSignedIn() && resource.data.uploadedBy == request.auth.uid;
     }
   }
 }

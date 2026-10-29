@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import { MathText } from './MathText';
+import React, { useRef, useState } from 'react';
 import { ExerciseItem } from '../types/calculus';
 import { MathView } from './MathView';
 import { MathKeypad } from './MathKeypad';
 import { FunctionGrapher } from './FunctionGrapher';
+import { privateFetch } from '../lib/api';
 import { 
   CheckCircle2, AlertCircle, Sparkles, HelpCircle, 
   ChevronRight, ArrowRight, Lightbulb, Compass, Award, RefreshCw 
@@ -12,7 +14,7 @@ interface LearningArenaProps {
   currentExercise: ExerciseItem;
   onSelectAnotherExercise: (exerciseId: string) => void;
   availableExercises: ExerciseItem[];
-  onAwardXp: (amount: number, reason: string) => void;
+  onAwardXp: (amount: number, reason: string) => Promise<void>;
 }
 
 export const LearningArena: React.FC<LearningArenaProps> = ({
@@ -36,6 +38,8 @@ export const LearningArena: React.FC<LearningArenaProps> = ({
 
   // Diagnosis state
   const [isEvaluating, setIsEvaluating] = useState<boolean>(false);
+  const verifying = useRef(false);
+  const rewarded = useRef(false);
   const [diagnosticResult, setDiagnosticResult] = useState<{
     isCorrect: boolean;
     classification?: string;
@@ -62,22 +66,26 @@ export const LearningArena: React.FC<LearningArenaProps> = ({
   };
 
   const handleVerifyStep = async () => {
-    if (!studentInputLatex.trim()) return;
+    if (!studentInputLatex.trim() || verifying.current || rewarded.current) return;
+    verifying.current = true;
 
     setIsEvaluating(true);
     setDiagnosticResult(null);
 
     try {
-      const response = await fetch('/api/tutor/diagnose-step', {
+      const response = await privateFetch('/api/tutor/diagnose-step', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           problemLatex: currentExercise.enunciadoLatex,
           studentStepLatex: studentInputLatex,
-          expectedAnswerLatex: currentExercise.expectedAnswerLatex
+          expectedAnswerLatex: currentExercise.expectedAnswerLatex,
+          studentJustification,
+          contextNotes: currentExercise.contextNotes
         })
       });
 
+      if (!response.ok) throw new Error('Diagnóstico indisponível');
       const data = await response.json();
       setDiagnosticResult(data);
 
@@ -85,30 +93,20 @@ export const LearningArena: React.FC<LearningArenaProps> = ({
         // Calculate rewarded XP based on hint dependency
         const penaltyFactor = Math.max(0.4, 1 - (hintLevel * 0.15));
         const finalXp = Math.round(currentExercise.xpReward * penaltyFactor);
-        onAwardXp(finalXp, `Resolução de ${currentExercise.questionNumber} (${hintLevel === 0 ? 'Independente!' : `${hintLevel} dicas`})`);
+        await onAwardXp(finalXp, `Resolução de ${currentExercise.questionNumber} (${hintLevel === 0 ? 'Independente!' : `${hintLevel} dicas`})`);
+        rewarded.current = true;
         setArenaStage('sucesso');
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      // Client-side fallback check
-      const normalizedInput = studentInputLatex.replace(/\s+/g, '').toLowerCase();
-      const normalizedExpected = currentExercise.expectedAnswerLatex.replace(/\s+/g, '').toLowerCase();
-      const isMatch = normalizedInput.includes(normalizedExpected) || normalizedExpected.includes(normalizedInput);
-
       setDiagnosticResult({
-        isCorrect: isMatch,
-        classification: isMatch ? undefined : 'erro_algebrico',
-        explanation: isMatch 
-          ? 'Resultado correto verificado numericamente!' 
-          : 'A expressão informada ainda não coincide com o gabarito oficial da Profa. Graça.',
-        remediation: 'Reveja os passos algébricos e consulte as dicas progressivas.'
+        isCorrect: false,
+        classification: 'verificacao_indisponivel',
+        explanation: `${err.message || 'Não foi possível avaliar sua resolução agora.'} Sua tentativa não foi classificada como erro.`,
+        remediation: 'Confira as dicas e o exemplo da trilha. A validação automática requer o serviço de IA configurado.'
       });
-
-      if (isMatch) {
-        onAwardXp(currentExercise.xpReward, `Resolução de ${currentExercise.questionNumber}`);
-        setArenaStage('sucesso');
-      }
     } finally {
+      verifying.current = false;
       setIsEvaluating(false);
     }
   };
@@ -159,7 +157,7 @@ export const LearningArena: React.FC<LearningArenaProps> = ({
           <div className="bg-[#121828] border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
             <div className="flex items-center justify-between border-b border-slate-800 pb-2">
               <span className="text-xs font-mono text-slate-400 font-semibold uppercase tracking-wider">
-                Enunciado Oficial
+                {currentExercise.id.startsWith('path-') ? 'Desafio complementar' : 'Enunciado do exercício'}
               </span>
               {currentExercise.contextNotes && (
                 <span className="text-xs text-amber-300/90 font-mono bg-amber-950/40 border border-amber-800/40 px-2 py-0.5 rounded">
@@ -238,7 +236,7 @@ export const LearningArena: React.FC<LearningArenaProps> = ({
             {/* Optional Step Justification (Crucial for Profa. Graça) */}
             <div>
               <label className="text-xs font-semibold text-slate-300 block mb-1">
-                Justificativa Matemática (opcional para demonstração):
+                Justificativa matemática (inclua os passos e o método utilizado):
               </label>
               <input
                 type="text"
@@ -268,7 +266,7 @@ export const LearningArena: React.FC<LearningArenaProps> = ({
                 type="button"
                 onClick={handleVerifyStep}
                 disabled={isEvaluating || !studentInputLatex.trim()}
-                className="px-6 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 disabled:opacity-50 text-white font-semibold text-sm rounded-xl shadow-lg shadow-purple-950/40 flex items-center gap-2 transition-all active:scale-95"
+                className="px-6 py-2.5 bg-teal-700 hover:bg-teal-600 disabled:opacity-50 text-white font-semibold text-sm rounded-xl shadow-lg shadow-purple-950/40 flex items-center gap-2 transition-all active:scale-95"
               >
                 {isEvaluating ? (
                   <>
@@ -290,6 +288,7 @@ export const LearningArena: React.FC<LearningArenaProps> = ({
                 className={`p-4 rounded-xl border text-xs space-y-2 animate-in fade-in duration-200 ${
                   diagnosticResult.isCorrect
                     ? 'bg-emerald-950/40 border-emerald-800/80 text-emerald-200'
+                    : diagnosticResult.classification === 'verificacao_indisponivel' ? 'bg-slate-900 border-slate-700 text-slate-300'
                     : 'bg-rose-950/40 border-rose-800/80 text-rose-200'
                 }`}
               >
@@ -302,19 +301,19 @@ export const LearningArena: React.FC<LearningArenaProps> = ({
                   ) : (
                     <>
                       <AlertCircle className="w-5 h-5 text-rose-400" />
-                      <span>Ponto de Dificuldade Identificado</span>
+                      <span>{diagnosticResult.classification === 'verificacao_indisponivel' ? 'Correção automática indisponível' : 'Ponto de Dificuldade Identificado'}</span>
                     </>
                   )}
                 </div>
 
                 {diagnosticResult.explanation && (
-                  <p className="leading-relaxed">{diagnosticResult.explanation}</p>
+                  <p className="leading-relaxed"><MathText text={diagnosticResult.explanation} /></p>
                 )}
 
                 {diagnosticResult.remediation && (
                   <div className="bg-slate-900/60 p-2.5 rounded-lg border border-slate-800/60 text-slate-300">
                     <strong className="text-purple-300 block mb-0.5">Intervenção Pedagógica:</strong>
-                    {diagnosticResult.remediation}
+                    <MathText text={diagnosticResult.remediation} />
                   </div>
                 )}
               </div>
@@ -366,7 +365,7 @@ export const LearningArena: React.FC<LearningArenaProps> = ({
                       {labels[index]}
                     </div>
                     {isRevealed ? (
-                      <div className="text-slate-300 leading-relaxed">{hintText}</div>
+                      <div className="text-slate-300 leading-relaxed"><MathText text={hintText} /></div>
                     ) : (
                       <div className="italic text-slate-600">Bloqueado · Peça a próxima dica para liberar</div>
                     )}
@@ -401,7 +400,7 @@ export const LearningArena: React.FC<LearningArenaProps> = ({
                   <div key={idx} className="bg-slate-900/80 p-2.5 rounded-lg border border-slate-800 flex gap-2">
                     <span className="font-mono text-emerald-400 font-bold">{idx + 1}.</span>
                     <div>
-                      <MathView math={step} block={false} />
+                      <MathText text={step} />
                     </div>
                   </div>
                 ))}

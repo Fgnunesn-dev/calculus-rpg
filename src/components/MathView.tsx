@@ -10,13 +10,17 @@ interface MathViewProps {
 export const MathView: React.FC<MathViewProps> = ({ math, block = false, className = '' }) => {
   const html = useMemo(() => {
     try {
+      if (math.length > 12000) throw new Error('Expressão muito longa');
       return katex.renderToString(math, {
         displayMode: block,
-        throwOnError: false,
-        strict: false
+        throwOnError: true,
+        strict: false,
+        trust: false,
+        maxExpand: 200,
+        maxSize: 20
       });
     } catch {
-      return `<span class="text-rose-400 font-mono">${math}</span>`;
+      return '<span class="text-amber-300" role="note">Expressão matemática não reconhecida. Solicite uma reformulação.</span>';
     }
   }, [math, block]);
 

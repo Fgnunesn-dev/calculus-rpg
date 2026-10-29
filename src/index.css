@@ -40,3 +40,21 @@
   overflow-y: hidden;
   padding-bottom: 2px;
 }
+
+/* Solid surfaces and one calm accent for the study workspace. */
+@layer components {
+  .study-card { border: 1px solid #273244; border-radius: 16px; background: #111b29; }
+  .eyebrow { display: flex; align-items: center; gap: 8px; color: #5eead4; font-size: 10px; font-weight: 700; letter-spacing: .16em; }
+  .study-primary, .study-secondary { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border-radius: 9px; padding: 11px 16px; font-size: 12px; font-weight: 600; transition: background-color .15s; }
+  .study-primary { background: #0f766e; color: white; border: 1px solid #0f766e; }
+  .study-primary:hover { background: #115e59; }
+  .study-secondary { background: #1e293b; color: #cbd5e1; border: 1px solid #334155; }
+  .study-secondary:hover { background: #334155; }
+}
+button, a, input, textarea, select { outline-offset: 4px; }
+button:focus-visible, a:focus-visible { outline: 2px solid #5eead4; }
+button { cursor: pointer; }
+button:disabled { cursor: not-allowed; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}

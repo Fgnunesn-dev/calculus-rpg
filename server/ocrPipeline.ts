@@ -15,7 +15,7 @@ export class OcrPipelineService {
     if (process.env.GEMINI_API_KEY) {
       this.ai = new GoogleGenAI({
         apiKey: process.env.GEMINI_API_KEY,
-        httpOptions: {
+        httpOptions: { timeout: 90000,
           headers: {
             'User-Agent': 'aistudio-build',
           },
@@ -38,7 +38,7 @@ export class OcrPipelineService {
         try {
           result = await this.processWithGeminiVision(fileBuffer, mimeType);
         } catch (geminiErr) {
-          console.warn('Gemini OCR failed, falling back to local OCR engine:', geminiErr);
+          console.warn('Gemini OCR indisponível; tentando leitor local.');
           result = await this.processWithFallbackOcr(fileBuffer, mimeType);
         }
       } else {
@@ -93,7 +93,7 @@ Exemplo de formato final de saída:
 `;
 
     const response = await this.ai.models.generateContent({
-      model: 'gemini-3.8-flash',
+      model: process.env.GEMINI_MODEL || 'gemini-3.8-flash',
       contents: [
         {
           inlineData: {
@@ -169,24 +169,7 @@ Exemplo de formato final de saída:
         throw tessErr;
       }
     } else {
-      // For PDF without Gemini API: extract printable text strings
-      const asciiText = fileBuffer
-        .toString('latin1')
-        .replace(/[^\x20-\x7E\n\r\t]/g, ' ')
-        .replace(/\s{2,}/g, ' ')
-        .slice(0, 5000);
-
-      const rawText = asciiText.length > 100 
-        ? `[Extração de Texto Bruto do PDF]:\n${asciiText}`
-        : `[Documento PDF recebido]: ${fileBuffer.length} bytes armazenados com sucesso no S3. O processamento avançado de fórmulas requer OCR de alta resolução ou chave Gemini.`;
-
-      const detectedExercises = this.extractExercisesFromText(rawText);
-
-      return {
-        rawText,
-        engine: 'native_pdf',
-        detectedExercises,
-      };
+      throw new Error('A leitura confiável de PDFs exige a IA configurada e disponível. O arquivo foi preservado; tente reprocessar mais tarde.');
     }
   }
 

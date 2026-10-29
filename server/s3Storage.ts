@@ -32,7 +32,7 @@ export class S3StorageService {
   private localBucketDir: string;
   private isRemoteS3Configured: boolean;
 
-  constructor() {
+  constructor(storageRoot?: string) {
     this.bucket = process.env.S3_BUCKET || 'calculus-rpg-documents';
     this.endpoint = process.env.S3_ENDPOINT || '';
     this.region = process.env.S3_REGION || 'us-east-1';
@@ -45,10 +45,17 @@ export class S3StorageService {
     );
 
     // Durable local storage folder matching S3 hierarchy
-    this.localBucketDir = path.resolve(process.cwd(), 'public', 's3-storage', this.bucket);
+    this.localBucketDir = path.resolve(storageRoot || path.join(process.cwd(), 'data', 'private-files'), this.bucket);
     if (!fs.existsSync(this.localBucketDir)) {
       fs.mkdirSync(this.localBucketDir, { recursive: true });
     }
+  }
+
+  private objectPath(key: string) {
+    if (!key || key.includes('\\') || key.split('/').some(segment => segment === '..' || segment === '.' || !segment) || path.isAbsolute(key) || key.includes(':')) throw new Error('Chave de arquivo inválida.');
+    const resolved = path.resolve(this.localBucketDir, key);
+    if (!resolved.startsWith(this.localBucketDir + path.sep)) throw new Error('Chave de arquivo inválida.');
+    return resolved;
   }
 
   /**
@@ -56,12 +63,12 @@ export class S3StorageService {
    */
   async putObject(params: S3PutObjectParams): Promise<S3StoredObject> {
     const bucket = params.Bucket || this.bucket;
-    const key = params.Key.replace(/^\/+/, ''); // sanitize
+    const key = params.Key;
     const hash = crypto.createHash('md5').update(params.Body).digest('hex');
     const etag = `"${hash}"`;
 
     // Ensure subdirectories exist for the key
-    const filePath = path.join(this.localBucketDir, key);
+    const filePath = this.objectPath(key);
     const dir = path.dirname(filePath);
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir, { recursive: true });
@@ -100,8 +107,7 @@ export class S3StorageService {
    * Retrieve an object buffer from S3
    */
   async getObject(key: string, bucket?: string): Promise<{ body: Buffer; contentType: string } | null> {
-    const sanitizedKey = key.replace(/^\/+/, '');
-    const filePath = path.join(this.localBucketDir, sanitizedKey);
+    const filePath = this.objectPath(key);
 
     if (!fs.existsSync(filePath)) {
       return null;
@@ -136,7 +142,7 @@ export class S3StorageService {
   }
 
   isRemote(): boolean {
-    return this.isRemoteS3Configured;
+    return false; // This adapter currently writes to private local disk only.
   }
 }
 

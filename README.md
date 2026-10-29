@@ -85,7 +85,7 @@ Combina tutoria pedagógica com inteligência artificial, pipeline de ingestão 
 ## 4. Como Executar
 
 ### Pré-requisitos
-- Node.js >= 20
+- Node.js >= 24.12 (compatível com as dependências atuais de Firebase e Vite)
 - Variável `GEMINI_API_KEY` (injetada automaticamente pelo ambiente)
 
 ### Comandos
@@ -102,6 +102,20 @@ npm run lint
 # Build de produção
 npm run build
 ```
+
+### Organização e trilha de estudos
+
+A aba **Organização** contém 14 módulos e 55 etapas: fundamentos, núcleo de Cálculo A e continuação até cálculo vetorial. Cada módulo inclui critérios de resolução, exemplo autoral, acesso à arena e referências de leitura. A continuação é complementar e não representa confirmação de conteúdo cobrado na disciplina.
+
+Checklist, anotações por módulo, meta semanal e dias de estudo ficam separados por conta e são sincronizados com o Firestore quando o login e as regras estão configurados. Há uma cópia local por UID; visitantes usam um espaço local separado. A marcação manual não concede XP ou maestria. O registro do dia pode ser desfeito.
+
+As referências externas incluem o curso de Cálculo 1 do GMA/UFF e os livros gratuitos da OpenStax. São links de leitura; os enunciados das listas e as restrições de método da professora têm prioridade. Os oito desafios adicionais e os exemplos da trilha são autorais, identificados como complementares.
+
+Para habilitar a correção por IA, configure `GEMINI_API_KEY` em um arquivo `.env` local a partir de `.env.example`. Sem a chave, a arena informa que a avaliação está indisponível; não inventa um diagnóstico nem concede XP. A validação com IA recebe a justificativa do estudante e as restrições do exercício. O serviço externo não foi validado sem credenciais.
+
+### Contas pessoais e provas
+
+O painel começa vazio para cada pessoa. Após o login Google, **Minhas provas** permite enviar um PDF ou imagem para criar um diagnóstico e uma rota de estudo pessoais. As APIs validam o token Firebase e restringem cada documento ao proprietário. Consulte [CONFIGURACAO.md](CONFIGURACAO.md) para habilitar o domínio local, publicar as regras do Firestore e configurar a chave da IA. O erro de login observado foi `auth/unauthorized-domain`; é necessário adicionar `localhost` no console Firebase.
 
 ---
 

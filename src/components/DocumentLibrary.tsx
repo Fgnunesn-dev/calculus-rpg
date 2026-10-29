@@ -1,3 +1,5 @@
+import { MathText } from './MathText';
+import { privateFetch, openPrivateFile } from '../lib/api';
 import React, { useState, useEffect, useRef } from 'react';
 import { 
   Upload, FileText, Image as ImageIcon, CheckCircle2, Clock, 
@@ -62,7 +64,7 @@ export const DocumentLibrary: React.FC<DocumentLibraryProps> = ({ onSelectExerci
   const fetchDocuments = async () => {
     try {
       setIsLoading(true);
-      const res = await fetch('/api/documents');
+      const res = await privateFetch('/api/documents');
       if (!res.ok) throw new Error('Falha ao obter documentos.');
       const data = await res.json();
       setDocuments(data.documents || []);
@@ -74,7 +76,7 @@ export const DocumentLibrary: React.FC<DocumentLibraryProps> = ({ onSelectExerci
         if (refreshed) setSelectedDoc(refreshed);
       }
     } catch (err: any) {
-      console.error(err);
+      setUploadError(err.message || 'Não foi possível carregar seus documentos.');
     } finally {
       setIsLoading(false);
     }
@@ -119,7 +121,7 @@ export const DocumentLibrary: React.FC<DocumentLibraryProps> = ({ onSelectExerci
       formData.append('semester', '2026.2');
       formData.append('type', file.type === 'application/pdf' ? 'Lista ou Prova PDF' : 'Foto de Questão / Anotação');
 
-      const response = await fetch('/api/documents/upload', {
+      const response = await privateFetch('/api/documents/upload', {
         method: 'POST',
         body: formData,
       });
@@ -150,7 +152,7 @@ export const DocumentLibrary: React.FC<DocumentLibraryProps> = ({ onSelectExerci
 
   const handleReprocessOcr = async (docId: string) => {
     try {
-      const res = await fetch(`/api/documents/${docId}/reprocess`, { method: 'POST' });
+      const res = await privateFetch(`/api/documents/${docId}/reprocess`, { method: 'POST' });
       if (res.ok) {
         fetchDocuments();
       }
@@ -499,6 +501,7 @@ export const DocumentLibrary: React.FC<DocumentLibraryProps> = ({ onSelectExerci
               <div className="flex items-center justify-between pt-2 border-t border-slate-800 text-xs">
                 <a
                   href={selectedDoc.s3Url}
+                  onClick={e => { e.preventDefault(); openPrivateFile(selectedDoc.s3Url).catch(err => setUploadError(err.message)); }}
                   target="_blank"
                   rel="noreferrer"
                   className="flex items-center gap-1 text-purple-400 hover:text-purple-300 transition-colors font-medium"
@@ -548,7 +551,7 @@ export const DocumentLibrary: React.FC<DocumentLibraryProps> = ({ onSelectExerci
                           )}
                         </div>
                         <p className="text-xs text-slate-400 font-mono line-clamp-2">
-                          {ex.enunciado}
+                          <MathText text={ex.enunciado} />
                         </p>
                       </div>
 

@@ -1,267 +1,226 @@
-import { DocumentItem, ExerciseItem, SkillNode, UserStats, ExamQuestion } from '../types/calculus';
-
-export const INITIAL_USER: UserStats = {
-  name: "Fabricio Gabriel Nunes Nascimento",
-  course: "Engenharia de Transportes",
-  university: "UFBA — Instituto de Matemática",
-  professor: "Profa. Graça Luzia Dominguez Santos",
-  level: 4,
-  currentXp: 1450,
-  nextLevelXp: 2000,
-  streakDays: 4,
-  streakProtected: true, // descanso inteligente sem punição
-  focusEnergy: 85,
-  recentAttemptsCount: 28,
-  accuracyRate: 46,
-  masteredSkillsCount: 3,
-  totalSkillsCount: 14,
-  title: "Cadete do Limite & Derivada"
-};
-
-export const INITIAL_DOCUMENTS: DocumentItem[] = [
-  {
-    id: "doc-prova-1",
-    title: "1ª Prova — Cálculo A (MATA02) 2026.2 [Corrigida]",
-    code: "PROVA-1-2026-2",
-    type: "prova",
-    semester: "2026.2",
-    professor: "Profa. Graça Luzia Dominguez Santos",
-    totalPages: 3,
-    url: "/assets/aistudio/CamScanner_29-10-26_16.05_cfd12b73.pdf",
-    extractedQuestionsCount: 5,
-    topicsCovered: ["Limites Indeterminados", "Continuidade de Função por Partes", "Reta Tangente Perpendicular", "Derivada pela Definição", "Regra da Cadeia"],
-    summary: "Prova oficial aplicada em 25/09/2026. Versão C com anotações e correções em caneta vermelha da professora. Nota obtida: 0.8 / 10.0."
-  },
-  {
-    id: "doc-lista-1",
-    title: "1ª Lista de Exercícios de Cálculo A (Atualizada)",
-    code: "LISTA-1-2026-2",
-    type: "lista",
-    semester: "2026.2",
-    professor: "Profa. Graça Luzia Dominguez Santos",
-    totalPages: 9,
-    url: "/assets/aistudio/1alista-ClculoA-2026-2-_corrigida_f79986f0.pdf",
-    extractedQuestionsCount: 29,
-    topicsCovered: ["Limites Laterais", "Continuidade", "Fatoração e Conjugado", "Teorema do Confronto", "Derivada pela Definição", "Retas Tangentes e Normais"],
-    summary: "29 questões cobrindo desde gráficos de funções por partes até retas tangentes geométricas, com gabarito oficial completo das páginas 5 a 8."
-  },
-  {
-    id: "doc-lista-2",
-    title: "2ª Lista de Exercícios de Cálculo A",
-    code: "LISTA-2-2026-2",
-    type: "lista",
-    semester: "2026.2",
-    professor: "Profa. Graça Luzia Dominguez Santos",
-    totalPages: 14,
-    url: "/assets/aistudio/2a._lista-ClculoA-2026-2_2ef81fe2.pdf",
-    extractedQuestionsCount: 16,
-    topicsCovered: ["Regra da Cadeia", "Derivada da Inversa", "Derivação Implícita", "Regra de L'Hôpital", "Taxas de Variação", "Máximos e Mínimos Aplicados"],
-    summary: "16 blocos com dezenas de itens de derivação avançada, L'Hôpital, problemas de taxa de variação e otimização geométrica, com gabarito oficial das páginas 6 a 14."
-  },
-  {
-    id: "doc-teoria-variacao",
-    title: "Notas de Aula: Estudo da Variação das Funções",
-    code: "TEORIA-VARIACAO-2026-2",
-    type: "notas_de_aula",
-    semester: "2026.2",
-    professor: "Profa. Graça Luzia Dominguez Santos",
-    totalPages: 18,
-    url: "/assets/aistudio/Estudo_de_variao_de_funes_-_Clculo_A_-_2026-2_32bea6d8.pdf",
-    extractedQuestionsCount: 12,
-    topicsCovered: ["Máximos e Mínimos Locais", "Teorema de Fermat", "Teorema de Rolle", "Teorema do Valor Médio", "Critério da 1ª Derivada", "Teste da 2ª Derivada", "Concavidade e Inflexão", "Assíntotas Verticais e Oblíquas"],
-    summary: "Apostila teórica completa contendo demonstrações formais, gráficos, critérios de teste e roteiro de esboço de curvas adotado pela UFBA."
-  }
-];
+import { ExerciseItem, SkillNode } from "../types/calculus";
 
 export const INITIAL_SKILLS: SkillNode[] = [
   {
-    id: "algebra-fatoracao",
-    name: "Fatoração & Racionalização",
-    category: "algebra",
-    description: "Fatorar polinômios (diferença de quadrados, soma de cubos, raízes) e multiplicar por conjugado para desarmar 0/0.",
-    prerequisites: [],
-    masteryScore: 35,
-    status: "unstable",
-    totalAttempts: 12,
-    successfulAttempts: 4,
-    evidence: ["Errou Q1.c e Q2 da 1ª Prova por não saber fatorar (x+1) no numerador", "Dificuldade em multiplicar por conjugado com raiz cúbica e quadrada"]
+    "id": "algebra-fatoracao",
+    "name": "Fatoração & Racionalização",
+    "category": "algebra",
+    "description": "Fatorar polinômios (diferença de quadrados, soma de cubos, raízes) e multiplicar por conjugado para desarmar 0/0.",
+    "prerequisites": [],
+    "masteryScore": 0,
+    "status": "unlearned",
+    "totalAttempts": 0,
+    "successfulAttempts": 0,
+    "evidence": []
   },
   {
-    id: "limites-laterais",
-    name: "Limites Laterais & Existência",
-    category: "limits",
-    description: "Cálculo e interpretação de lim_{x -> a^-} f(x) e lim_{x -> a^+} f(x) em gráficos e funções por partes.",
-    prerequisites: ["algebra-fatoracao"],
-    masteryScore: 78,
-    status: "mastered",
-    totalAttempts: 15,
-    successfulAttempts: 12,
-    evidence: ["Acertou os limites laterais da Q1 da 1ª Lista de Exercícios", "Compreende condição de existência do limite bilateral"]
+    "id": "limites-laterais",
+    "name": "Limites Laterais & Existência",
+    "category": "limits",
+    "description": "Cálculo e interpretação de lim_{x -> a^-} f(x) e lim_{x -> a^+} f(x) em gráficos e funções por partes.",
+    "prerequisites": [
+      "algebra-fatoracao"
+    ],
+    "masteryScore": 0,
+    "status": "unlearned",
+    "totalAttempts": 0,
+    "successfulAttempts": 0,
+    "evidence": []
   },
   {
-    id: "limites-indeterminados",
-    name: "Limites Indeterminados (0/0 e Inf - Inf)",
-    category: "limits",
-    description: "Eliminar indeterminações algébricas sem usar L'Hôpital (obrigatório para 1ª Prova da Profa. Graça).",
-    prerequisites: ["algebra-fatoracao"],
-    masteryScore: 28,
-    status: "unstable",
-    totalAttempts: 18,
-    successfulAttempts: 5,
-    evidence: ["Errou Q1.a e Q1.b na 1ª Prova", "Tentou substituir infinito diretamente obtendo infinito - infinito como resposta"]
+    "id": "limites-indeterminados",
+    "name": "Limites Indeterminados (0/0 e Inf - Inf)",
+    "category": "limits",
+    "description": "Eliminar indeterminações algébricas sem usar L'Hôpital (obrigatório para 1ª Prova da Profa. Graça).",
+    "prerequisites": [
+      "algebra-fatoracao"
+    ],
+    "masteryScore": 0,
+    "status": "unlearned",
+    "totalAttempts": 0,
+    "successfulAttempts": 0,
+    "evidence": []
   },
   {
-    id: "limites-trigonometricos",
-    name: "Limites Trigonométricos Fundamentais",
-    category: "limits",
-    description: "Aplicação do limite fundamental lim_{x -> 0} (sen x)/x = 1 e identidades trigonométricas para 1 - cos x.",
-    prerequisites: ["limites-indeterminados"],
-    masteryScore: 30,
-    status: "unstable",
-    totalAttempts: 9,
-    successfulAttempts: 2,
-    evidence: ["Tentou resolver lim 5x^2/(1-cos x) sem converter 1-cos x em 2 sen^2(x/2) ou multiplicar por (1+cos x)"]
+    "id": "limites-trigonometricos",
+    "name": "Limites Trigonométricos Fundamentais",
+    "category": "limits",
+    "description": "Aplicação do limite fundamental lim_{x -> 0} (sen x)/x = 1 e identidades trigonométricas para 1 - cos x.",
+    "prerequisites": [
+      "limites-indeterminados"
+    ],
+    "masteryScore": 0,
+    "status": "unlearned",
+    "totalAttempts": 0,
+    "successfulAttempts": 0,
+    "evidence": []
   },
   {
-    id: "continuidade-pontos",
-    name: "Continuidade & Extensão Contínua",
-    category: "limits",
-    description: "Três condições de continuidade em x_0 e determinação de parâmetros (a, b) em funções por partes.",
-    prerequisites: ["limites-laterais", "limites-indeterminados"],
-    masteryScore: 40,
-    status: "learning",
-    totalAttempts: 10,
-    successfulAttempts: 4,
-    evidence: ["Calculou f(-1) = -4 na Q2 da Prova, mas travou na equação de limite lateral esquerdo"]
+    "id": "continuidade-pontos",
+    "name": "Continuidade & Extensão Contínua",
+    "category": "limits",
+    "description": "Três condições de continuidade em x_0 e determinação de parâmetros (a, b) em funções por partes.",
+    "prerequisites": [
+      "limites-laterais",
+      "limites-indeterminados"
+    ],
+    "masteryScore": 0,
+    "status": "unlearned",
+    "totalAttempts": 0,
+    "successfulAttempts": 0,
+    "evidence": []
   },
   {
-    id: "teorema-confronto",
-    name: "Teorema do Confronto (Sanduíche)",
-    category: "limits",
-    description: "Produto de função limitada por infinitésimo: lim f(x)g(x) = 0 quando f -> 0 e g é limitada.",
-    prerequisites: ["limites-indeterminados"],
-    masteryScore: 25,
-    status: "unstable",
-    totalAttempts: 8,
-    successfulAttempts: 2,
-    evidence: ["Errou Q1.d da 1ª Prova: escreveu ln(-inf/-inf) em vez de notar que ln(1) = 0 e sen(x) é limitada [-1,1]"]
+    "id": "teorema-confronto",
+    "name": "Teorema do Confronto (Sanduíche)",
+    "category": "limits",
+    "description": "Produto de função limitada por infinitésimo: lim f(x)g(x) = 0 quando f -> 0 e g é limitada.",
+    "prerequisites": [
+      "limites-indeterminados"
+    ],
+    "masteryScore": 0,
+    "status": "unlearned",
+    "totalAttempts": 0,
+    "successfulAttempts": 0,
+    "evidence": []
   },
   {
-    id: "derivada-definicao",
-    name: "Derivada pela Definição Formal",
-    category: "derivatives_basics",
-    description: "Cálculo do limite do quociente de Newton lim_{x -> x_0} (f(x)-f(x_0))/(x-x_0) e limites laterais para pontos angulosos.",
-    prerequisites: ["limites-indeterminados", "continuidade-pontos"],
-    masteryScore: 20,
-    status: "unstable",
-    totalAttempts: 7,
-    successfulAttempts: 1,
-    evidence: ["Errou Q4 da 1ª Prova: calculou apenas lim f(x) em vez de aplicar o quociente de Newton f(x)-f(x_0)/(x-x_0)"]
+    "id": "derivada-definicao",
+    "name": "Derivada pela Definição Formal",
+    "category": "derivatives_basics",
+    "description": "Cálculo do limite do quociente de Newton lim_{x -> x_0} (f(x)-f(x_0))/(x-x_0) e limites laterais para pontos angulosos.",
+    "prerequisites": [
+      "limites-indeterminados",
+      "continuidade-pontos"
+    ],
+    "masteryScore": 0,
+    "status": "unlearned",
+    "totalAttempts": 0,
+    "successfulAttempts": 0,
+    "evidence": []
   },
   {
-    id: "regras-derivacao-basicas",
-    name: "Regras de Derivação (Potência, Produto, Quociente)",
-    category: "derivatives_basics",
-    description: "Derivadas de polinômios, funções racionais, exponenciais e trigonométricas básicas.",
-    prerequisites: ["derivada-definicao"],
-    masteryScore: 68,
-    status: "learning",
-    totalAttempts: 22,
-    successfulAttempts: 15,
-    evidence: ["Consegue aplicar a regra da potência e soma, hesita em frações complexas com expoentes fracionários"]
+    "id": "regras-derivacao-basicas",
+    "name": "Regras de Derivação (Potência, Produto, Quociente)",
+    "category": "derivatives_basics",
+    "description": "Derivadas de polinômios, funções racionais, exponenciais e trigonométricas básicas.",
+    "prerequisites": [
+      "derivada-definicao"
+    ],
+    "masteryScore": 0,
+    "status": "unlearned",
+    "totalAttempts": 0,
+    "successfulAttempts": 0,
+    "evidence": []
   },
   {
-    id: "reta-tangente-normal",
-    name: "Equação da Reta Tangente & Normal",
-    category: "derivatives_basics",
-    description: "Interpretação geométrica da derivada: m = f'(x_0), equações y - y_0 = m(x - x_0) e retas perpendiculares m_1 * m_2 = -1.",
-    prerequisites: ["regras-derivacao-basicas"],
-    masteryScore: 45,
-    status: "learning",
-    totalAttempts: 11,
-    successfulAttempts: 5,
-    evidence: ["Identificou coeficiente angular na Q3 da prova mas errou o cálculo da coordenada y_0 do ponto"]
+    "id": "reta-tangente-normal",
+    "name": "Equação da Reta Tangente & Normal",
+    "category": "derivatives_basics",
+    "description": "Interpretação geométrica da derivada: m = f'(x_0), equações y - y_0 = m(x - x_0) e retas perpendiculares m_1 * m_2 = -1.",
+    "prerequisites": [
+      "regras-derivacao-basicas"
+    ],
+    "masteryScore": 0,
+    "status": "unlearned",
+    "totalAttempts": 0,
+    "successfulAttempts": 0,
+    "evidence": []
   },
   {
-    id: "regra-da-cadeia",
-    name: "Regra da Cadeia & Derivação Composta",
-    category: "derivatives_advanced",
-    description: "(f o g)'(x) = f'(g(x)) * g'(x) e composição de múltiplas funções com funções trigonométricas inversas.",
-    prerequisites: ["regras-derivacao-basicas"],
-    masteryScore: 35,
-    status: "learning",
-    totalAttempts: 14,
-    successfulAttempts: 5,
-    evidence: ["Esquece de multiplicar pela derivada da função interna na Q5.a e Q5.b da 1ª prova"]
+    "id": "regra-da-cadeia",
+    "name": "Regra da Cadeia & Derivação Composta",
+    "category": "derivatives_advanced",
+    "description": "(f o g)'(x) = f'(g(x)) * g'(x) e composição de múltiplas funções com funções trigonométricas inversas.",
+    "prerequisites": [
+      "regras-derivacao-basicas"
+    ],
+    "masteryScore": 0,
+    "status": "unlearned",
+    "totalAttempts": 0,
+    "successfulAttempts": 0,
+    "evidence": []
   },
   {
-    id: "derivacao-implicita",
-    name: "Derivação Implícita & Derivada da Inversa",
-    category: "derivatives_advanced",
-    description: "Derivar equações F(x, y) = 0 em relação a x isolando dy/dx e fórmula (f^-1)'(f(x)) = 1/f'(x).",
-    prerequisites: ["regra-da-cadeia"],
-    masteryScore: 15,
-    status: "unlearned",
-    totalAttempts: 4,
-    successfulAttempts: 0,
-    evidence: ["Conteúdo da 2ª Lista ainda não consolidado"]
+    "id": "derivacao-implicita",
+    "name": "Derivação Implícita & Derivada da Inversa",
+    "category": "derivatives_advanced",
+    "description": "Derivar equações F(x, y) = 0 em relação a x isolando dy/dx e fórmula (f^-1)'(f(x)) = 1/f'(x).",
+    "prerequisites": [
+      "regra-da-cadeia"
+    ],
+    "masteryScore": 0,
+    "status": "unlearned",
+    "totalAttempts": 0,
+    "successfulAttempts": 0,
+    "evidence": []
   },
   {
-    id: "regra-lhospital",
-    name: "Regra de L'Hôpital",
-    category: "derivatives_advanced",
-    description: "Aplicação da regra para formas 0/0, inf/inf e transformações de 0 * inf e 1^inf.",
-    prerequisites: ["regra-da-cadeia"],
-    masteryScore: 50,
-    status: "learning",
-    totalAttempts: 10,
-    successfulAttempts: 5,
-    evidence: ["Sabe derivar numerador e denominador em casos simples, mas falha nas formas exponenciais"]
+    "id": "regra-lhospital",
+    "name": "Regra de L'Hôpital",
+    "category": "derivatives_advanced",
+    "description": "Aplicação da regra para formas 0/0, inf/inf e transformações de 0 * inf e 1^inf.",
+    "prerequisites": [
+      "regra-da-cadeia"
+    ],
+    "masteryScore": 0,
+    "status": "unlearned",
+    "totalAttempts": 0,
+    "successfulAttempts": 0,
+    "evidence": []
   },
   {
-    id: "taxas-relacionadas",
-    name: "Taxas de Variação Relacionadas",
-    category: "derivatives_advanced",
-    description: "Modelagem de grandezas que variam no tempo (cone de areia, drenagem, gás PV=c, mancha de óleo).",
-    prerequisites: ["regra-da-cadeia", "derivacao-implicita"],
-    masteryScore: 10,
-    status: "unlearned",
-    totalAttempts: 2,
-    successfulAttempts: 0,
-    evidence: ["Questão 11 da 2ª Lista pendente de estudo"]
+    "id": "taxas-relacionadas",
+    "name": "Taxas de Variação Relacionadas",
+    "category": "derivatives_advanced",
+    "description": "Modelagem de grandezas que variam no tempo (cone de areia, drenagem, gás PV=c, mancha de óleo).",
+    "prerequisites": [
+      "regra-da-cadeia",
+      "derivacao-implicita"
+    ],
+    "masteryScore": 0,
+    "status": "unlearned",
+    "totalAttempts": 0,
+    "successfulAttempts": 0,
+    "evidence": []
   },
   {
-    id: "analise-variacao-extremos",
-    name: "Estudo da Variação, Extremos & Gráficos",
-    category: "function_analysis",
-    description: "Teoremas de Fermat, Rolle e Lagrange (TVM), testes de 1ª e 2ª derivada, concavidade, pontos de inflexão e assíntotas.",
-    prerequisites: ["reta-tangente-normal", "regra-da-cadeia"],
-    masteryScore: 20,
-    status: "unlearned",
-    totalAttempts: 3,
-    successfulAttempts: 0,
-    evidence: ["Matéria das notas de aula da Profa. Graça e Questões 12, 14, 15 e 16 da 2ª Lista"]
+    "id": "analise-variacao-extremos",
+    "name": "Estudo da Variação, Extremos & Gráficos",
+    "category": "function_analysis",
+    "description": "Teoremas de Fermat, Rolle e Lagrange (TVM), testes de 1ª e 2ª derivada, concavidade, pontos de inflexão e assíntotas.",
+    "prerequisites": [
+      "reta-tangente-normal",
+      "regra-da-cadeia"
+    ],
+    "masteryScore": 0,
+    "status": "unlearned",
+    "totalAttempts": 0,
+    "successfulAttempts": 0,
+    "evidence": []
   }
 ];
 
 export const INITIAL_EXERCISES: ExerciseItem[] = [
-  // --- REAL PROVA 1 QUESTIONS (Re-purposed for remedial practice) ---
   {
-    id: "ex-prova1-q1a",
-    listNumber: 0,
-    questionNumber: "1ª Prova — Q1.a",
-    title: "Limite no Infinito com Diferença de Radicais",
-    topic: "Limites",
-    subtopic: "Forma Indeterminada Infinito - Infinito",
-    difficulty: "intermediario",
-    xpReward: 60,
-    associatedSkills: ["limites-indeterminados", "algebra-fatoracao"],
-    enunciadoLatex: "\\lim_{x \\to +\\infty} \\left( x - \\sqrt{x^2 + 8x} \\right)",
-    contextNotes: "Questão real da sua 1ª Prova. NÃO É PERMITIDO usar L'Hôpital (regra da prova da Profa. Graça).",
-    sourceDocument: "1ª Prova — Cálculo A (MATA02) 2026.2",
-    sourcePage: 1,
-    expectedAnswerLatex: "-4",
-    officialResolutionSteps: [
+    "id": "ex-prova1-q1a",
+    "listNumber": 0,
+    "questionNumber": "1ª Prova — Q1.a",
+    "title": "Limite no Infinito com Diferença de Radicais",
+    "topic": "Limites",
+    "subtopic": "Forma Indeterminada Infinito - Infinito",
+    "difficulty": "intermediario",
+    "xpReward": 60,
+    "associatedSkills": [
+      "limites-indeterminados",
+      "algebra-fatoracao"
+    ],
+    "enunciadoLatex": "\\lim_{x \\to +\\infty} \\left( x - \\sqrt{x^2 + 8x} \\right)",
+    "contextNotes": "Questão do acervo de Cálculo A. NÃO É PERMITIDO usar L'Hôpital (regra da prova da Profa. Graça).",
+    "sourceDocument": "1ª Prova — Cálculo A (MATA02) 2026.2",
+    "sourcePage": 1,
+    "expectedAnswerLatex": "-4",
+    "officialResolutionSteps": [
       "Identifique a indeterminação: quando x -> +infty, temos infty - infty.",
       "Multiplique e divida pela expressão conjugada: (x + \\sqrt{x^2+8x}).",
       "No numerador: (x - \\sqrt{x^2+8x})(x + \\sqrt{x^2+8x}) = x^2 - (x^2 + 8x) = -8x.",
@@ -269,9 +228,9 @@ export const INITIAL_EXERCISES: ExerciseItem[] = [
       "Simplifique o termo x comum: \\frac{-8x}{x(1 + \\sqrt{1 + 8/x})} = \\frac{-8}{1 + \\sqrt{1 + 8/x}}.",
       "Calcule o limite quando x -> +infty: \\frac{-8}{1 + 1} = -4."
     ],
-    hasOfficialAnswer: true,
-    userStatus: "erro_recorrente",
-    sampleHints: [
+    "hasOfficialAnswer": true,
+    "userStatus": "nao_tentado",
+    "sampleHints": [
       "Que tipo de indeterminação você obtém ao substituir x por +\\infty?",
       "Lembre-se da técnica do conjugado: (A - B)(A + B) = A^2 - B^2.",
       "Multiplique o numerador e denominador por (x + \\sqrt{x^2 + 8x}).",
@@ -280,21 +239,24 @@ export const INITIAL_EXERCISES: ExerciseItem[] = [
     ]
   },
   {
-    id: "ex-prova1-q1b",
-    listNumber: 0,
-    questionNumber: "1ª Prova — Q1.b",
-    title: "Limite Trigonométrico Fundamental",
-    topic: "Limites",
-    subtopic: "Indeterminação 0/0 com Cosseno",
-    difficulty: "intermediario",
-    xpReward: 55,
-    associatedSkills: ["limites-trigonometricos", "limites-indeterminados"],
-    enunciadoLatex: "\\lim_{x \\to 0} \\frac{5x^2}{1 - \\cos x}",
-    contextNotes: "Proibido L'Hôpital nesta avaliação. Use identidades trigonométricas ou conjugado.",
-    sourceDocument: "1ª Prova — Cálculo A (MATA02) 2026.2",
-    sourcePage: 1,
-    expectedAnswerLatex: "10",
-    officialResolutionSteps: [
+    "id": "ex-prova1-q1b",
+    "listNumber": 0,
+    "questionNumber": "1ª Prova — Q1.b",
+    "title": "Limite Trigonométrico Fundamental",
+    "topic": "Limites",
+    "subtopic": "Indeterminação 0/0 com Cosseno",
+    "difficulty": "intermediario",
+    "xpReward": 55,
+    "associatedSkills": [
+      "limites-trigonometricos",
+      "limites-indeterminados"
+    ],
+    "enunciadoLatex": "\\lim_{x \\to 0} \\frac{5x^2}{1 - \\cos x}",
+    "contextNotes": "Proibido L'Hôpital nesta avaliação. Use identidades trigonométricas ou conjugado.",
+    "sourceDocument": "1ª Prova — Cálculo A (MATA02) 2026.2",
+    "sourcePage": 1,
+    "expectedAnswerLatex": "10",
+    "officialResolutionSteps": [
       "Substituindo x = 0, temos 0 / (1 - 1) = 0/0 (indeterminação).",
       "Multiplique numerador e denominador pelo conjugado (1 + \\cos x).",
       "Denominador: (1 - \\cos x)(1 + \\cos x) = 1 - \\cos^2 x = \\text{sen}^2 x.",
@@ -302,9 +264,9 @@ export const INITIAL_EXERCISES: ExerciseItem[] = [
       "Pelo limite trigonométrico fundamental: \\lim_{x \\to 0} \\frac{x}{\\text{sen } x} = 1.",
       "Logo, 5 \\cdot (1)^2 \\cdot (1 + 1) = 5 \\cdot 2 = 10."
     ],
-    hasOfficialAnswer: true,
-    userStatus: "erro_recorrente",
-    sampleHints: [
+    "hasOfficialAnswer": true,
+    "userStatus": "nao_tentado",
+    "sampleHints": [
       "Substituindo x=0 temos 0/0. Como transformar (1 - cos x) em sen(x)?",
       "Lembre-se da identidade fundamental: sen^2(x) + cos^2(x) = 1.",
       "Multiplique por (1 + cos x) / (1 + cos x).",
@@ -313,30 +275,33 @@ export const INITIAL_EXERCISES: ExerciseItem[] = [
     ]
   },
   {
-    id: "ex-prova1-q1d",
-    listNumber: 0,
-    questionNumber: "1ª Prova — Q1.d",
-    title: "Limite com Logaritmo e Teorema do Confronto",
-    topic: "Limites",
-    subtopic: "Infinitésimo x Função Limitada",
-    difficulty: "desafio",
-    xpReward: 75,
-    associatedSkills: ["teorema-confronto", "limites-indeterminados"],
-    enunciadoLatex: "\\lim_{x \\to -\\infty} \\ln\\left( \\frac{x^3 + 5x + 7}{4 - 2x + x^3} \\right) \\cdot \\text{sen}(x)",
-    contextNotes: "Atenção ao argumento do logaritmo natural e à limitação da função seno.",
-    sourceDocument: "1ª Prova — Cálculo A (MATA02) 2026.2",
-    sourcePage: 1,
-    expectedAnswerLatex: "0",
-    officialResolutionSteps: [
+    "id": "ex-prova1-q1d",
+    "listNumber": 0,
+    "questionNumber": "1ª Prova — Q1.d",
+    "title": "Limite com Logaritmo e Teorema do Confronto",
+    "topic": "Limites",
+    "subtopic": "Infinitésimo x Função Limitada",
+    "difficulty": "desafio",
+    "xpReward": 75,
+    "associatedSkills": [
+      "teorema-confronto",
+      "limites-indeterminados"
+    ],
+    "enunciadoLatex": "\\lim_{x \\to -\\infty} \\ln\\left( \\frac{x^3 + 5x + 7}{4 - 2x + x^3} \\right) \\cdot \\text{sen}(x)",
+    "contextNotes": "Atenção ao argumento do logaritmo natural e à limitação da função seno.",
+    "sourceDocument": "1ª Prova — Cálculo A (MATA02) 2026.2",
+    "sourcePage": 1,
+    "expectedAnswerLatex": "0",
+    "officialResolutionSteps": [
       "Analise o limite do argumento interno da fração: \\lim_{x \\to -\\infty} \\frac{x^3 + 5x + 7}{x^3 - 2x + 4} = 1.",
       "Pela continuidade da função ln: \\lim_{x \\to -\\infty} \\ln\\left(\\dots\\right) = \\ln(1) = 0.",
       "Agora observe o fator \\text{sen}(x): ele NÃO possui limite no infinito, porém é estritamente limitado: -1 \\le \\text{sen}(x) \\le 1 para todo x real.",
       "Pelo Teorema do Confronto (ou teorema do infinitésimo por função limitada): se f(x) -> 0 e |g(x)| <= M, então lim f(x)g(x) = 0.",
       "Portanto, o limite é rigorosamente 0."
     ],
-    hasOfficialAnswer: true,
-    userStatus: "erro_recorrente",
-    sampleHints: [
+    "hasOfficialAnswer": true,
+    "userStatus": "nao_tentado",
+    "sampleHints": [
       "Analise primeiro o comportamento de \\frac{x^3+5x+7}{4-2x+x^3} quando x tende a -\\infty.",
       "Qual é o valor de \\ln(1)?",
       "O que sabemos sobre os valores possíveis de \\text{sen}(x) para qualquer x?",
@@ -345,21 +310,25 @@ export const INITIAL_EXERCISES: ExerciseItem[] = [
     ]
   },
   {
-    id: "ex-prova1-q2",
-    listNumber: 0,
-    questionNumber: "1ª Prova — Q2",
-    title: "Determinação de Constantes para Continuidade",
-    topic: "Continuidade",
-    subtopic: "Função por Partes e Fatoração",
-    difficulty: "intermediario",
-    xpReward: 70,
-    associatedSkills: ["continuidade-pontos", "algebra-fatoracao", "limites-laterais"],
-    enunciadoLatex: "f(x) = \\begin{cases} \\frac{x^2 + ax + b}{x + 1}, & \\text{se } x < -1 \\\\ x^2 - 5, & \\text{se } x \\ge -1 \\end{cases} \\quad \\text{Determine } a, b \\in \\mathbb{R} \\text{ para que } f \\text{ seja contínua em } x = -1.",
-    contextNotes: "Valor da questão na prova: 2,0 pontos. Exige justificativa formal.",
-    sourceDocument: "1ª Prova — Cálculo A (MATA02) 2026.2",
-    sourcePage: 1,
-    expectedAnswerLatex: "a = -2, \\; b = -3",
-    officialResolutionSteps: [
+    "id": "ex-prova1-q2",
+    "listNumber": 0,
+    "questionNumber": "1ª Prova — Q2",
+    "title": "Determinação de Constantes para Continuidade",
+    "topic": "Continuidade",
+    "subtopic": "Função por Partes e Fatoração",
+    "difficulty": "intermediario",
+    "xpReward": 70,
+    "associatedSkills": [
+      "continuidade-pontos",
+      "algebra-fatoracao",
+      "limites-laterais"
+    ],
+    "enunciadoLatex": "f(x) = \\begin{cases} \\frac{x^2 + ax + b}{x + 1}, & \\text{se } x < -1 \\\\ x^2 - 5, & \\text{se } x \\ge -1 \\end{cases} \\quad \\text{Determine } a, b \\in \\mathbb{R} \\text{ para que } f \\text{ seja contínua em } x = -1.",
+    "contextNotes": "Valor da questão na prova: 2,0 pontos. Exige justificativa formal.",
+    "sourceDocument": "1ª Prova — Cálculo A (MATA02) 2026.2",
+    "sourcePage": 1,
+    "expectedAnswerLatex": "a = -2, \\; b = -3",
+    "officialResolutionSteps": [
       "Para ser contínua em x = -1, é necessário que: f(-1) = \\lim_{x \\to -1^+} f(x) = \\lim_{x \\to -1^-} f(x).",
       "1) Pela definição da função: f(-1) = (-1)^2 - 5 = 1 - 5 = -4.",
       "2) Limite pela direita: \\lim_{x \\to -1^+} (x^2 - 5) = -4.",
@@ -371,9 +340,9 @@ export const INITIAL_EXERCISES: ExerciseItem[] = [
       "Igualando ao valor necessário (-4): a - 2 = -4 \\implies a = -2.",
       "Calculando b: b = a - 1 = (-2) - 1 = -3."
     ],
-    hasOfficialAnswer: true,
-    userStatus: "erro_recorrente",
-    sampleHints: [
+    "hasOfficialAnswer": true,
+    "userStatus": "nao_tentado",
+    "sampleHints": [
       "Qual é o valor de f(-1) usando o ramo para x >= -1?",
       "Para que o quociente com denominador tendendo a 0 resulte em um número real, o numerador também precisa zerar em x = -1.",
       "Iguale o numerador a zero em x = -1 para obter uma relação entre a e b: b = a - 1.",
@@ -382,21 +351,24 @@ export const INITIAL_EXERCISES: ExerciseItem[] = [
     ]
   },
   {
-    id: "ex-prova1-q3",
-    listNumber: 0,
-    questionNumber: "1ª Prova — Q3",
-    title: "Reta Tangente Perpendicular a Reta Dada",
-    topic: "Derivadas",
-    subtopic: "Equação da Reta Tangente",
-    difficulty: "intermediario",
-    xpReward: 50,
-    associatedSkills: ["reta-tangente-normal", "regras-derivacao-basicas"],
-    enunciadoLatex: "f(x) = 2x^2 - 3x + 1. \\; \\text{Determine a equação da reta tangente ao gráfico que seja perpendicular à reta } x + 3y = 7.",
-    contextNotes: "Valor: 1,0 ponto. Lembre que retas perpendiculares satisfazem m_1 * m_2 = -1.",
-    sourceDocument: "1ª Prova — Cálculo A (MATA02) 2026.2",
-    sourcePage: 1,
-    expectedAnswerLatex: "y = 3x - \\frac{7}{2} \\quad \\text{ou} \\quad 6x - 2y - 7 = 0",
-    officialResolutionSteps: [
+    "id": "ex-prova1-q3",
+    "listNumber": 0,
+    "questionNumber": "1ª Prova — Q3",
+    "title": "Reta Tangente Perpendicular a Reta Dada",
+    "topic": "Derivadas",
+    "subtopic": "Equação da Reta Tangente",
+    "difficulty": "intermediario",
+    "xpReward": 50,
+    "associatedSkills": [
+      "reta-tangente-normal",
+      "regras-derivacao-basicas"
+    ],
+    "enunciadoLatex": "f(x) = 2x^2 - 3x + 1. \\; \\text{Determine a equação da reta tangente ao gráfico que seja perpendicular à reta } x + 3y = 7.",
+    "contextNotes": "Valor: 1,0 ponto. Lembre que retas perpendiculares satisfazem m_1 * m_2 = -1.",
+    "sourceDocument": "1ª Prova — Cálculo A (MATA02) 2026.2",
+    "sourcePage": 1,
+    "expectedAnswerLatex": "y = 3x - \\frac{7}{2} \\quad \\text{ou} \\quad 6x - 2y - 7 = 0",
+    "officialResolutionSteps": [
       "Isolando y na reta dada: 3y = -x + 7 \\implies y = -\\frac{1}{3}x + \\frac{7}{3}. O coeficiente angular é m_r = -\\frac{1}{3}.",
       "Como a reta tangente é perpendicular, seu coeficiente angular deve ser m_t = -\\frac{1}{m_r} = -\\frac{1}{-1/3} = 3.",
       "O coeficiente angular da tangente em x_0 é a derivada f'(x_0).",
@@ -406,9 +378,9 @@ export const INITIAL_EXERCISES: ExerciseItem[] = [
       "Ponto de tangência: (3/2, 1).",
       "Equação da reta tangente: y - y_0 = m_t(x - x_0) \\implies y - 1 = 3\\left(x - \\frac{3}{2}\\right) \\implies y = 3x - \\frac{7}{2}."
     ],
-    hasOfficialAnswer: true,
-    userStatus: "erro_recorrente",
-    sampleHints: [
+    "hasOfficialAnswer": true,
+    "userStatus": "nao_tentado",
+    "sampleHints": [
       "Qual é o coeficiente angular da reta x + 3y = 7?",
       "Se duas retas são perpendiculares, qual a relação entre suas inclinações?",
       "A inclinação desejada é m = 3. Onde a derivada f'(x) é igual a 3?",
@@ -417,21 +389,24 @@ export const INITIAL_EXERCISES: ExerciseItem[] = [
     ]
   },
   {
-    id: "ex-prova1-q4",
-    listNumber: 0,
-    questionNumber: "1ª Prova — Q4",
-    title: "Derivabilidade de Função por Partes pela Definição",
-    topic: "Derivadas",
-    subtopic: "Quociente de Newton e Derivadas Laterais",
-    difficulty: "desafio",
-    xpReward: 70,
-    associatedSkills: ["derivada-definicao", "continuidade-pontos"],
-    enunciadoLatex: "f(x) = \\begin{cases} \\frac{4}{x} - 4, & \\text{se } x > 1 \\\\ 2x - 2, & \\text{se } x \\le 1 \\end{cases} \\quad \\text{Usando a definição de derivada, verifique se } f \\text{ é derivável em } x = 1.",
-    contextNotes: "Valor: 1,0 ponto. OBRIGATÓRIO usar o limite do quociente de Newton (f(x)-f(1))/(x-1).",
-    sourceDocument: "1ª Prova — Cálculo A (MATA02) 2026.2",
-    sourcePage: 1,
-    expectedAnswerLatex: "\\text{Não é derivável em } x = 1 \\; (f'_-(1) = 2 \\ne f'_+(1) = -4)",
-    officialResolutionSteps: [
+    "id": "ex-prova1-q4",
+    "listNumber": 0,
+    "questionNumber": "1ª Prova — Q4",
+    "title": "Derivabilidade de Função por Partes pela Definição",
+    "topic": "Derivadas",
+    "subtopic": "Quociente de Newton e Derivadas Laterais",
+    "difficulty": "desafio",
+    "xpReward": 70,
+    "associatedSkills": [
+      "derivada-definicao",
+      "continuidade-pontos"
+    ],
+    "enunciadoLatex": "f(x) = \\begin{cases} \\frac{4}{x} - 4, & \\text{se } x > 1 \\\\ 2x - 2, & \\text{se } x \\le 1 \\end{cases} \\quad \\text{Usando a definição de derivada, verifique se } f \\text{ é derivável em } x = 1.",
+    "contextNotes": "Valor: 1,0 ponto. OBRIGATÓRIO usar o limite do quociente de Newton (f(x)-f(1))/(x-1).",
+    "sourceDocument": "1ª Prova — Cálculo A (MATA02) 2026.2",
+    "sourcePage": 1,
+    "expectedAnswerLatex": "\\text{Não é derivável em } x = 1 \\; (f'_-(1) = 2 \\ne f'_+(1) = -4)",
+    "officialResolutionSteps": [
       "Primeiro note que f(1) = 2(1) - 2 = 0.",
       "Para que f seja derivável em x = 1, o limite bilateral \\lim_{x \\to 1} \\frac{f(x) - f(1)}{x - 1} deve existir, o que exige f'_-(1) = f'_+(1).",
       "Calculando a derivada lateral à esquerda f'_-(1):",
@@ -441,9 +416,9 @@ export const INITIAL_EXERCISES: ExerciseItem[] = [
       "Como f'_-(1) = 2 \\ne -4 = f'_+(1), as derivadas laterais são distintas.",
       "Conclusão: f NÃO é derivável em x = 1 (existe um ponto anguloso no gráfico)."
     ],
-    hasOfficialAnswer: true,
-    userStatus: "erro_recorrente",
-    sampleHints: [
+    "hasOfficialAnswer": true,
+    "userStatus": "nao_tentado",
+    "sampleHints": [
       "Qual é a fórmula formal da derivada f'(x_0) usando limite?",
       "Calcule primeiro f(1). Qual ramo define f(1)?",
       "Monte o limite lateral à esquerda com f(x) = 2x - 2: lim_{x -> 1^-} (2x-2 - 0)/(x-1).",
@@ -451,23 +426,24 @@ export const INITIAL_EXERCISES: ExerciseItem[] = [
       "As derivadas laterais resultam em 2 e -4. Como são diferentes, f não é derivável em 1."
     ]
   },
-
-  // --- QUESTIONS FROM 1ª LISTA (Limites, Continuidade, Retas) ---
   {
-    id: "ex-lista1-q05k",
-    listNumber: 1,
-    questionNumber: "1ª Lista — 05.k",
-    title: "Limite Algébrico com Dupla Racionalização",
-    topic: "Limites",
-    subtopic: "Racionalização de Numerador e Denominador",
-    difficulty: "desafio",
-    xpReward: 65,
-    associatedSkills: ["algebra-fatoracao", "limites-indeterminados"],
-    enunciadoLatex: "\\lim_{x \\to 4} \\frac{3 - \\sqrt{5 + x}}{1 - \\sqrt{5 - x}}",
-    sourceDocument: "1ª Lista de Exercícios de Cálculo A",
-    sourcePage: 1,
-    expectedAnswerLatex: "-\\frac{1}{3}",
-    officialResolutionSteps: [
+    "id": "ex-lista1-q05k",
+    "listNumber": 1,
+    "questionNumber": "1ª Lista — 05.k",
+    "title": "Limite Algébrico com Dupla Racionalização",
+    "topic": "Limites",
+    "subtopic": "Racionalização de Numerador e Denominador",
+    "difficulty": "desafio",
+    "xpReward": 65,
+    "associatedSkills": [
+      "algebra-fatoracao",
+      "limites-indeterminados"
+    ],
+    "enunciadoLatex": "\\lim_{x \\to 4} \\frac{3 - \\sqrt{5 + x}}{1 - \\sqrt{5 - x}}",
+    "sourceDocument": "1ª Lista de Exercícios de Cálculo A",
+    "sourcePage": 1,
+    "expectedAnswerLatex": "-\\frac{1}{3}",
+    "officialResolutionSteps": [
       "Em x = 4: numerador 3 - \\sqrt{9} = 0, denominador 1 - \\sqrt{1} = 0 (forma 0/0).",
       "Multiplique numerador e denominador pelos dois conjugados: (3 + \\sqrt{5+x}) e (1 + \\sqrt{5-x}).",
       "Numerador: (9 - (5+x)) = 4 - x.",
@@ -475,9 +451,9 @@ export const INITIAL_EXERCISES: ExerciseItem[] = [
       "Cancelando (4 - x), sobra: -\\frac{1 + \\sqrt{5-x}}{3 + \\sqrt{5+x}}.",
       "Substituindo x = 4: -\\frac{1 + 1}{3 + 3} = -\\frac{2}{6} = -\\frac{1}{3}."
     ],
-    hasOfficialAnswer: true,
-    userStatus: "nao_tentado",
-    sampleHints: [
+    "hasOfficialAnswer": true,
+    "userStatus": "nao_tentado",
+    "sampleHints": [
       "Observe que ambos numerador e denominador possuem radicais que geram zero.",
       "Multiplique pelo conjugado de ambos simultaneamente.",
       "Note que (9 - (5+x)) = 4 - x e (1 - (5-x)) = -(4 - x).",
@@ -486,29 +462,31 @@ export const INITIAL_EXERCISES: ExerciseItem[] = [
     ]
   },
   {
-    id: "ex-lista1-q11d",
-    listNumber: 1,
-    questionNumber: "1ª Lista — 11.d",
-    title: "Limite Trigonométrico com Tangente e Seno",
-    topic: "Limites",
-    subtopic: "Limites Trigonométricos",
-    difficulty: "intermediario",
-    xpReward: 50,
-    associatedSkills: ["limites-trigonometricos"],
-    enunciadoLatex: "\\lim_{x \\to 0} \\frac{\\text{tg } x - \\text{sen } x}{\\text{sen}^2 x}",
-    sourceDocument: "1ª Lista de Exercícios de Cálculo A",
-    sourcePage: 3,
-    expectedAnswerLatex: "0",
-    officialResolutionSteps: [
+    "id": "ex-lista1-q11d",
+    "listNumber": 1,
+    "questionNumber": "1ª Lista — 11.d",
+    "title": "Limite Trigonométrico com Tangente e Seno",
+    "topic": "Limites",
+    "subtopic": "Limites Trigonométricos",
+    "difficulty": "intermediario",
+    "xpReward": 50,
+    "associatedSkills": [
+      "limites-trigonometricos"
+    ],
+    "enunciadoLatex": "\\lim_{x \\to 0} \\frac{\\text{tg } x - \\text{sen } x}{\\text{sen}^2 x}",
+    "sourceDocument": "1ª Lista de Exercícios de Cálculo A",
+    "sourcePage": 3,
+    "expectedAnswerLatex": "0",
+    "officialResolutionSteps": [
       "Escreva tg x = sen x / cos x.",
       "O numerador se torna sen x (1/cos x - 1) = sen x (1 - cos x) / cos x.",
       "Dividindo por sen^2 x: \\frac{1 - \\cos x}{\\cos x \\cdot \\text{sen } x}.",
       "Multiplicando por (1 + cos x)/(1 + cos x): \\frac{\\text{sen}^2 x}{\\cos x \\cdot \\text{sen } x \\cdot (1 + \\cos x)} = \\frac{\\text{sen } x}{\\cos x (1 + \\cos x)}.",
       "Quando x -> 0, sen 0 = 0 e o denominador vai para 1 * 2 = 2. Logo 0/2 = 0."
     ],
-    hasOfficialAnswer: true,
-    userStatus: "nao_tentado",
-    sampleHints: [
+    "hasOfficialAnswer": true,
+    "userStatus": "nao_tentado",
+    "sampleHints": [
       "Converta tg(x) para sen(x)/cos(x).",
       "Coloque sen(x) em evidência no numerador.",
       "Cancele um termo sen(x) entre numerador e denominador.",
@@ -516,32 +494,33 @@ export const INITIAL_EXERCISES: ExerciseItem[] = [
       "O limite avalia para 0/2 = 0."
     ]
   },
-
-  // --- QUESTIONS FROM 2ª LISTA (Regra da Cadeia, Implícita, L'Hôpital, Otimização) ---
   {
-    id: "ex-lista2-q1a",
-    listNumber: 2,
-    questionNumber: "2ª Lista — 1.a",
-    title: "Regra da Cadeia para Potência Composta",
-    topic: "Derivadas",
-    subtopic: "Regra da Cadeia",
-    difficulty: "iniciante",
-    xpReward: 40,
-    associatedSkills: ["regra-da-cadeia", "regras-derivacao-basicas"],
-    enunciadoLatex: "f(u) = u^2, \\quad u(x) = x^3 - 4. \\quad \\text{Determine } (f \\circ u)'(x) \\text{ e } (f \\circ u)'(1).",
-    sourceDocument: "2ª Lista de Exercícios de Cálculo A",
-    sourcePage: 1,
-    expectedAnswerLatex: "(f \\circ u)'(x) = 6x^2(x^3 - 4), \\quad (f \\circ u)'(1) = -18",
-    officialResolutionSteps: [
+    "id": "ex-lista2-q1a",
+    "listNumber": 2,
+    "questionNumber": "2ª Lista — 1.a",
+    "title": "Regra da Cadeia para Potência Composta",
+    "topic": "Derivadas",
+    "subtopic": "Regra da Cadeia",
+    "difficulty": "iniciante",
+    "xpReward": 40,
+    "associatedSkills": [
+      "regra-da-cadeia",
+      "regras-derivacao-basicas"
+    ],
+    "enunciadoLatex": "f(u) = u^2, \\quad u(x) = x^3 - 4. \\quad \\text{Determine } (f \\circ u)'(x) \\text{ e } (f \\circ u)'(1).",
+    "sourceDocument": "2ª Lista de Exercícios de Cálculo A",
+    "sourcePage": 1,
+    "expectedAnswerLatex": "(f \\circ u)'(x) = 6x^2(x^3 - 4), \\quad (f \\circ u)'(1) = -18",
+    "officialResolutionSteps": [
       "Pela regra da cadeia: (f o u)'(x) = f'(u(x)) * u'(x).",
       "f'(u) = 2u, logo f'(u(x)) = 2(x^3 - 4).",
       "u'(x) = 3x^2.",
       "(f o u)'(x) = 2(x^3 - 4) * 3x^2 = 6x^2(x^3 - 4).",
       "Para x = 1: 6(1)^2(1^3 - 4) = 6 * (-3) = -18."
     ],
-    hasOfficialAnswer: true,
-    userStatus: "nao_tentado",
-    sampleHints: [
+    "hasOfficialAnswer": true,
+    "userStatus": "nao_tentado",
+    "sampleHints": [
       "Qual é a fórmula da regra da cadeia para a derivada de f(u(x))?",
       "Calcule f'(u) e u'(x) separadamente.",
       "Substitua u(x) = x^3 - 4 na expressão de f'(u).",
@@ -550,29 +529,32 @@ export const INITIAL_EXERCISES: ExerciseItem[] = [
     ]
   },
   {
-    id: "ex-lista2-q7a",
-    listNumber: 2,
-    questionNumber: "2ª Lista — 7.a",
-    title: "Derivação Implícita do Círculo",
-    topic: "Derivadas",
-    subtopic: "Derivação Implícita",
-    difficulty: "intermediario",
-    xpReward: 50,
-    associatedSkills: ["derivacao-implicita", "regra-da-cadeia"],
-    enunciadoLatex: "x^2 + y^2 = 4. \\quad \\text{Calcule } \\frac{dy}{dx} \\text{ no ponto } P(1, \\sqrt{3}) \\text{ e } \\frac{dx}{dy} \\text{ no ponto } Q(\\sqrt{3}, 1).",
-    sourceDocument: "2ª Lista de Exercícios de Cálculo A",
-    sourcePage: 2,
-    expectedAnswerLatex: "\\frac{dy}{dx} = -\\frac{x}{y}, \\; y'_P = -\\frac{\\sqrt{3}}{3}; \\quad \\frac{dx}{dy} = -\\frac{y}{x}, \\; x'_Q = -\\frac{\\sqrt{3}}{3}",
-    officialResolutionSteps: [
+    "id": "ex-lista2-q7a",
+    "listNumber": 2,
+    "questionNumber": "2ª Lista — 7.a",
+    "title": "Derivação Implícita do Círculo",
+    "topic": "Derivadas",
+    "subtopic": "Derivação Implícita",
+    "difficulty": "intermediario",
+    "xpReward": 50,
+    "associatedSkills": [
+      "derivacao-implicita",
+      "regra-da-cadeia"
+    ],
+    "enunciadoLatex": "x^2 + y^2 = 4. \\quad \\text{Calcule } \\frac{dy}{dx} \\text{ no ponto } P(1, \\sqrt{3}) \\text{ e } \\frac{dx}{dy} \\text{ no ponto } Q(\\sqrt{3}, 1).",
+    "sourceDocument": "2ª Lista de Exercícios de Cálculo A",
+    "sourcePage": 2,
+    "expectedAnswerLatex": "\\frac{dy}{dx} = -\\frac{x}{y}, \\; y'_P = -\\frac{\\sqrt{3}}{3}; \\quad \\frac{dx}{dy} = -\\frac{y}{x}, \\; x'_Q = -\\frac{\\sqrt{3}}{3}",
+    "officialResolutionSteps": [
       "Derivando implicitamente em relação a x: d/dx(x^2 + y^2) = d/dx(4).",
       "2x + 2y * (dy/dx) = 0 => 2y * (dy/dx) = -2x => dy/dx = -x/y.",
       "No ponto P(1, \\sqrt{3}): dy/dx = -1/\\sqrt{3} = -\\sqrt{3}/3.",
       "Derivando implicitamente em relação a y: 2x * (dx/dy) + 2y = 0 => dx/dy = -y/x.",
       "No ponto Q(\\sqrt{3}, 1): dx/dy = -1/\\sqrt{3} = -\\sqrt{3}/3."
     ],
-    hasOfficialAnswer: true,
-    userStatus: "nao_tentado",
-    sampleHints: [
+    "hasOfficialAnswer": true,
+    "userStatus": "nao_tentado",
+    "sampleHints": [
       "Lembre-se que y é função de x: a derivada de y^2 em relação a x é 2y * y'.",
       "Isole y' na equação linear resultante.",
       "Substitua as coordenadas x = 1 e y = \\sqrt{3}.",
@@ -581,29 +563,32 @@ export const INITIAL_EXERCISES: ExerciseItem[] = [
     ]
   },
   {
-    id: "ex-lista2-q11d",
-    listNumber: 2,
-    questionNumber: "2ª Lista — 11.d",
-    title: "Taxa de Variação Relacionada: Mancha de Óleo Circular",
-    topic: "Aplicações de Derivadas",
-    subtopic: "Taxas de Variação Relacionadas",
-    difficulty: "intermediario",
-    xpReward: 60,
-    associatedSkills: ["taxas-relacionadas", "regra-da-cadeia"],
-    enunciadoLatex: "\\text{Uma mancha de óleo se alastra circularmente. Sabendo que a taxa de variação do raio é } \\frac{dr}{dt} = 22\\text{ m/h}, \\text{ determine a taxa de variação da área } \\frac{dA}{dt} \\text{ em função de } r.",
-    sourceDocument: "2ª Lista de Exercícios de Cálculo A",
-    sourcePage: 3,
-    expectedAnswerLatex: "\\frac{dA}{dt} = 44\\pi r \\text{ m}^2/\\text{h}",
-    officialResolutionSteps: [
+    "id": "ex-lista2-q11d",
+    "listNumber": 2,
+    "questionNumber": "2ª Lista — 11.d",
+    "title": "Taxa de Variação Relacionada: Mancha de Óleo Circular",
+    "topic": "Aplicações de Derivadas",
+    "subtopic": "Taxas de Variação Relacionadas",
+    "difficulty": "intermediario",
+    "xpReward": 60,
+    "associatedSkills": [
+      "taxas-relacionadas",
+      "regra-da-cadeia"
+    ],
+    "enunciadoLatex": "\\text{Uma mancha de óleo se alastra circularmente. Sabendo que a taxa de variação do raio é } \\frac{dr}{dt} = 22\\text{ m/h}, \\text{ determine a taxa de variação da área } \\frac{dA}{dt} \\text{ em função de } r.",
+    "sourceDocument": "2ª Lista de Exercícios de Cálculo A",
+    "sourcePage": 3,
+    "expectedAnswerLatex": "\\frac{dA}{dt} = 44\\pi r \\text{ m}^2/\\text{h}",
+    "officialResolutionSteps": [
       "A área de um círculo de raio r é A = \\pi r^2.",
       "Como tanto a área quanto o raio são funções do tempo t, derivamos ambos em relação a t:",
       "dA/dt = d/dt(\\pi r^2) = \\pi \\cdot 2r \\cdot \\frac{dr}{dt}.",
       "O enunciado fornece dr/dt = 22 m/h.",
       "Substituindo: dA/dt = 2\\pi r \\cdot (22) = 44\\pi r."
     ],
-    hasOfficialAnswer: true,
-    userStatus: "nao_tentado",
-    sampleHints: [
+    "hasOfficialAnswer": true,
+    "userStatus": "nao_tentado",
+    "sampleHints": [
       "Qual é a fórmula geométrica que relaciona a área A e o raio r de um círculo?",
       "Aplique a regra da cadeia derivando A = \\pi r^2 em relação ao tempo t.",
       "Lembre-se do fator dr/dt: dA/dt = 2\\pi r (dr/dt).",
@@ -612,20 +597,22 @@ export const INITIAL_EXERCISES: ExerciseItem[] = [
     ]
   },
   {
-    id: "ex-lista2-q16b",
-    listNumber: 2,
-    questionNumber: "2ª Lista — 16.b",
-    title: "Problema de Otimização: Retângulo de Área Máxima com Perímetro Fixo",
-    topic: "Aplicações de Derivadas",
-    subtopic: "Máximos e Mínimos Aplicados",
-    difficulty: "desafio",
-    xpReward: 70,
-    associatedSkills: ["analise-variacao-extremos"],
-    enunciadoLatex: "\\text{Molde um fio de arame de comprimento } L \\text{ em forma de um retângulo cuja área seja a maior possível. Encontre a área máxima obtida.}",
-    sourceDocument: "2ª Lista de Exercícios de Cálculo A",
-    sourcePage: 5,
-    expectedAnswerLatex: "\\text{Área máxima} = \\frac{L^2}{16}",
-    officialResolutionSteps: [
+    "id": "ex-lista2-q16b",
+    "listNumber": 2,
+    "questionNumber": "2ª Lista — 16.b",
+    "title": "Problema de Otimização: Retângulo de Área Máxima com Perímetro Fixo",
+    "topic": "Aplicações de Derivadas",
+    "subtopic": "Máximos e Mínimos Aplicados",
+    "difficulty": "desafio",
+    "xpReward": 70,
+    "associatedSkills": [
+      "analise-variacao-extremos"
+    ],
+    "enunciadoLatex": "\\text{Molde um fio de arame de comprimento } L \\text{ em forma de um retângulo cuja área seja a maior possível. Encontre a área máxima obtida.}",
+    "sourceDocument": "2ª Lista de Exercícios de Cálculo A",
+    "sourcePage": 5,
+    "expectedAnswerLatex": "\\text{Área máxima} = \\frac{L^2}{16}",
+    "officialResolutionSteps": [
       "Sejam x e y as dimensões do retângulo. O perímetro é 2x + 2y = L => y = L/2 - x.",
       "A função de área a maximizar é A(x) = x * y = x(L/2 - x) = (L/2)x - x^2.",
       "O domínio físico de x é 0 < x < L/2.",
@@ -635,153 +622,14 @@ export const INITIAL_EXERCISES: ExerciseItem[] = [
       "A outra dimensão é y = L/2 - L/4 = L/4 (um quadrado!).",
       "Área máxima: A(L/4) = (L/4) * (L/4) = L^2 / 16."
     ],
-    hasOfficialAnswer: true,
-    userStatus: "nao_tentado",
-    sampleHints: [
+    "hasOfficialAnswer": true,
+    "userStatus": "nao_tentado",
+    "sampleHints": [
       "Escreva a equação do perímetro com as dimensões x e y.",
       "Isole uma das variáveis (y = L/2 - x) e substitua na fórmula da área A = x*y.",
       "Calcule a derivada A'(x) para encontrar os pontos críticos.",
       "Iguale A'(x) a zero para achar a dimensão ótima x.",
       "Substitua x = L/4 na área para obter L^2/16."
-    ]
-  }
-];
-
-export const AUTOPSY_PROVA_1: ExamQuestion[] = [
-  {
-    id: "p1-q1a",
-    number: "Questão 1.a",
-    value: 1.0,
-    title: "Limite no infinito com radicais",
-    enunciadoLatex: "\\lim_{x \\to +\\infty} (x - \\sqrt{x^2 + 8x})",
-    officialGabaritoLatex: "-4",
-    studentAnswerLatex: "+\\infty \\;\\; (\\text{tentativa: substituiu } 100 \\text{ e colocou } +\\infty)",
-    scoreAwarded: 0.0,
-    identifiedErrors: [
-      {
-        type: "erro_conceitual",
-        description: "Tratou a forma indeterminada \\infty - \\infty como aritmética direta, sem multiplicar pelo conjugado.",
-        pedagogicRemediation: "Treinar a técnica de conjugado para limites com raízes no infinito: (A - B)(A + B) / (A + B)."
-      }
-    ]
-  },
-  {
-    id: "p1-q1b",
-    number: "Questão 1.b",
-    value: 1.0,
-    title: "Limite trigonométrico 0/0",
-    enunciadoLatex: "\\lim_{x \\to 0} \\frac{5x^2}{1 - \\cos x}",
-    officialGabaritoLatex: "10",
-    studentAnswerLatex: "0 \\;\\; (\\text{escreveu } 0/0 \\text{ e colocou zero})",
-    scoreAwarded: 0.0,
-    identifiedErrors: [
-      {
-        type: "metodo_inadequado",
-        description: "Não utilizou o conjugado (1+cos x) nem a identidade sen^2(x) + cos^2(x) = 1. A professora anotou '0/0'.",
-        pedagogicRemediation: "Dominar o limite fundamental lim (sen x)/x = 1 e a relação 1 - cos x = 2 sen^2(x/2)."
-      }
-    ]
-  },
-  {
-    id: "p1-q1c",
-    number: "Questão 1.c",
-    value: 1.0,
-    title: "Limite com quociente de raízes",
-    enunciadoLatex: "\\lim_{x \\to -1} \\frac{\\sqrt{x^2 + 5} - \\sqrt{3x + 6}}{x + 1}",
-    officialGabaritoLatex: "\\text{Não existe / tende a } \\pm\\infty \\text{ (denominador zero e numerador } \\sqrt{6}-\\sqrt{3} \\ne 0)",
-    studentAnswerLatex: "0 \\;\\; (\\text{escreveu } (\\sqrt{6}-\\sqrt{3})/0 = 0)",
-    scoreAwarded: 0.0,
-    identifiedErrors: [
-      {
-        type: "erro_aritmetico",
-        description: "Afirmou que constante não-nula dividida por zero é igual a zero (k / 0 = 0).",
-        pedagogicRemediation: "Revisar comportamento assintótico: quando o numerador tende a constante c != 0 e denominador tende a 0, a fração diverge para +\\infty, -\\infty ou limites laterais distintos."
-      }
-    ]
-  },
-  {
-    id: "p1-q1d",
-    number: "Questão 1.d",
-    value: 1.0,
-    title: "Limite com ln e seno",
-    enunciadoLatex: "\\lim_{x \\to -\\infty} \\ln\\left( \\frac{x^3 + 5x + 7}{4 - 2x + x^3} \\right) \\text{sen}(x)",
-    officialGabaritoLatex: "0",
-    studentAnswerLatex: "0 \\;\\; (\\text{tentativa com 'ln(-inf/-inf)' - professora colocou '??? Domínio da função!'})",
-    scoreAwarded: 0.0,
-    identifiedErrors: [
-      {
-        type: "acerto_sem_dominio",
-        description: "Acertou o número final 0 por chute, mas violou o domínio do logaritmo escrevendo ln(-inf/-inf). A professora anulou completamente.",
-        pedagogicRemediation: "Justificar rigorosamente usando limite de quociente de polinômios de mesmo grau (tende a 1) e Teorema do Confronto (função limitada)."
-      }
-    ]
-  },
-  {
-    id: "p1-q2",
-    number: "Questão 2",
-    value: 2.0,
-    title: "Continuidade de função por partes",
-    enunciadoLatex: "f(x) = \\begin{cases} \\frac{x^2 + ax + b}{x + 1}, & x < -1 \\\\ x^2 - 5, & x \\ge -1 \\end{cases}",
-    officialGabaritoLatex: "a = -2, \\; b = -3",
-    studentAnswerLatex: "0 = 1 + ax + b \\implies -1 = ax + b",
-    scoreAwarded: 0.3,
-    identifiedErrors: [
-      {
-        type: "erro_algebrico",
-        description: "Não percebeu que x = -1 é uma raiz do numerador e não soube fatorar o polinômio x^2 + ax + b como (x+1)(x - r).",
-        pedagogicRemediation: "Estudar divisão de polinômios e fatoração por raízes conhecidas em limites 0/0."
-      }
-    ]
-  },
-  {
-    id: "p1-q3",
-    number: "Questão 3",
-    value: 1.0,
-    title: "Reta tangente perpendicular",
-    enunciadoLatex: "f(x) = 2x^2 - 3x + 1, \\; \\text{perpendicular a } x + 3y = 7",
-    officialGabaritoLatex: "y = 3x - \\frac{7}{2}",
-    studentAnswerLatex: "\\text{Deixou em branco / tentativa incompleta}",
-    scoreAwarded: 0.0,
-    identifiedErrors: [
-      {
-        type: "falta_justificativa",
-        description: "Não relacionou o coeficiente angular da perpendicular m_t = -1/m_r com a derivada f'(x).",
-        pedagogicRemediation: "Praticar geometria analítica básica de retas e significado geométrico da derivada como inclinação da reta tangente."
-      }
-    ]
-  },
-  {
-    id: "p1-q4",
-    number: "Questão 4",
-    value: 1.0,
-    title: "Derivada pela definição formal",
-    enunciadoLatex: "f(x) = \\begin{cases} 4/x - 4, & x > 1 \\\\ 2x - 2, & x \\le 1 \\end{cases} \\quad \\text{em } x = 1",
-    officialGabaritoLatex: "\\text{Não derivável: } f'_-(1) = 2 \\ne f'_+(1) = -4",
-    studentAnswerLatex: "\\lim_{x \\to 1^+} (4/x - 4) = 0, \\; \\lim_{x \\to 1^-} (2x - 2) = 0 \\implies \\text{derivável}",
-    scoreAwarded: 0.0,
-    identifiedErrors: [
-      {
-        type: "erro_conceitual",
-        description: "Confundiu continuidade (lim f(x)) com derivabilidade (lim (f(x)-f(1))/(x-1)). A professora anotou '1x - 2 = 0 ? ? ?'.",
-        pedagogicRemediation: "Entender que continuidade é condição necessária mas NÃO suficiente para derivabilidade. Calcular sempre o quociente de Newton."
-      }
-    ]
-  },
-  {
-    id: "p1-q5",
-    number: "Questão 5",
-    value: 2.0,
-    title: "Regras de derivação e cadeia",
-    enunciadoLatex: "a) \\; f(x) = (2x^3 - 4x^{-2})^{\\frac{1}{2}x}, \\quad b) \\; g(x) = \\frac{\\sqrt[3]{x + 2\\text{tg } x}}{\\cos x}",
-    officialGabaritoLatex: "\\text{Derivação logarítmica para (a) e regra do quociente + cadeia para (b)}",
-    studentAnswerLatex: "\\text{Tentativa parcial com erros de potência}",
-    scoreAwarded: 0.5,
-    identifiedErrors: [
-      {
-        type: "falha_notacao",
-        description: "Não aplicou derivação logarítmica em f(x) = u(x)^{v(x)} e esqueceu a derivada interna da raiz cúbica.",
-        pedagogicRemediation: "Praticar a técnica de ln y = v(x) ln u(x) e diferenciação passo a passo."
-      }
     ]
   }
 ];
