@@ -10,7 +10,9 @@ return async function requireUser(req: Request, res: Response, next: NextFunctio
   if (!header?.startsWith('Bearer ')) { res.status(401).json({ error: 'Entre com Google para continuar.' }); return; }
   try {
     const token = await verify(header.slice(7));
-    res.locals.uid = token.uid; next();
+    res.locals.uid = token.uid;
+    res.locals.idToken = header.slice(7);
+    next();
   } catch { res.status(401).json({ error: 'Sessão inválida ou expirada. Entre novamente.' }); }
 }
 }

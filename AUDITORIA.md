@@ -2,7 +2,7 @@
 
 ## Resultado e alcance
 
-A suíte automatizada passou em 28 testes. TypeScript passou. O npm audit retornou zero vulnerabilidades conhecidas após atualizar esbuild e a dependência transitiva gRPC. Dois testes reais com Gemini passaram: análise de um PDF sintético de uma questão e recuperação de um parâmetro informado em uma conversa anterior. Os dados usados nesses testes eram fictícios.
+A suíte automatizada passou em 36 testes. TypeScript passou. O npm audit retornou zero vulnerabilidades conhecidas após atualizar esbuild e a dependência transitiva gRPC. Dois testes reais com Gemini passaram: análise de um PDF sintético de uma questão e recuperação de um parâmetro informado em uma conversa anterior. Os dados usados nesses testes eram fictícios.
 
 Isso não constitui garantia de ausência de vulnerabilidades nem certificação de todos os fluxos em produção. A integração do navegador retornou `browser.user is unavailable`, impedindo a validação automática dos cliques. O login Google real, a publicação das regras e a sincronização Firestore entre duas contas/dispositivos precisam de uma rodada de validação no ambiente administrativo e no domínio final.
 
@@ -55,7 +55,11 @@ O teste opcional `node --import tsx scripts/live-ai-smoke.ts` usa a chave local 
 ## Pontos para publicação
 
 - Publique as regras do Firestore no banco correto e teste duas contas reais no domínio final. As regras em disco não confirmam o estado do Firebase remoto.
-- Hospede o backend Node em produção, com HTTPS e disco persistente para data. CSP e limites de requisições não substituem controle de custos no provedor, backups e monitoramento.
+- Hospede o backend Node em produção, com HTTPS. Conversas e diagnósticos usam Firestore; preservar também os binários originais requer armazenamento de arquivos persistente. CSP e limites de requisições não substituem controle de custos no provedor, backups e monitoramento.
 - O progresso é pessoal e editável pelo proprietário da conta. Não é um sistema de notas oficiais, premiação financeira ou ranking resistente a adulteração por clientes.
 - Os PDFs/fotos pessoais e o banco documental presentes no repositório original foram retirados do conjunto versionado nesta branch. As cópias locais foram preservadas. Isso não apaga versões já existentes no histórico Git remoto; histórico antigo deve ser tratado separadamente se sua exposição foi indesejada.
 - A chave de Gemini, conversas, arquivos de usuários e bancos locais não entram no commit. A configuração web pública do Firebase é identificadora do projeto e continua no frontend; o controle de acesso depende das regras e dos tokens.
+
+## Atualização: memória Firestore
+
+A suíte inclui a perda completa do disco entre instâncias, histórico e diagnósticos na API REST simulada, isolamento entre contas, migração idempotente e falhas de nuvem/cache. O Firestore real não foi exercitado sem token de usuário e publicação das novas regras. Consulte MEMORIA-NUVEM.md para ativar antes do redeploy.

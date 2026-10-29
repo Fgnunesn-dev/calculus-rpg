@@ -9,4 +9,4 @@ export interface ExamAnalysis {
   recommendedModuleIds: string[];
   questions: { number: string; topic: string; statement: string; feedback: string; practicePrompt: string; earnedScore: number | null; maximumScore: number | null }[];
 }
-export interface ExamReport { id: string; originalName: string; uploadedAt: string; analysis: ExamAnalysis; }
+export interface ExamReport { id: string; originalName: string; uploadedAt: string; analysis: ExamAnalysis; originalAvailable?: boolean; }

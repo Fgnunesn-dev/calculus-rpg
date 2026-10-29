@@ -127,3 +127,7 @@ O painel começa vazio para cada pessoa. Após o login Google, **Minhas provas**
 - `POST /api/documents/:id/reprocess`: Dispara reprocessamento do OCR para um documento existente.
 - `POST /api/tutor/chat`: Conversa pedagógica com o Tutor de IA em 6 modos.
 - `POST /api/tutor/diagnose-step`: Análise diagnóstica de passos algébricos com taxonomia de erros.
+
+### Memória persistente no Render Free
+
+Conversas e diagnósticos agora usam o Firestore por padrão, separados por conta, enquanto os PDFs originais ficam em cache temporário. Publique as novas regras antes de usar esta versão. O guia MEMORIA-NUVEM.md explica a ativação, as cotas e a migração do histórico local ainda existente. Não é necessária outra chave administrativa nem um disco pago para preservar o aprendizado.

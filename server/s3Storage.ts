@@ -57,6 +57,7 @@ export class S3StorageService {
     if (!resolved.startsWith(this.localBucketDir + path.sep)) throw new Error('Chave de arquivo inválida.');
     return resolved;
   }
+  hasObject(key: string) { return fs.existsSync(this.objectPath(key)); }
 
   /**
    * Upload an object into the S3 bucket

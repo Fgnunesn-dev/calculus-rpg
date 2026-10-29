@@ -14,6 +14,7 @@ export const AiTutor: React.FC = () => {
   const [historyLoading, setHistoryLoading] = useState(Boolean(currentUser));
   const [historyError, setHistoryError] = useState<string | null>(null);
   const [historyRetry, setHistoryRetry] = useState(0);
+  const [memoryPersistence, setMemoryPersistence] = useState<string | null>(null);
   const sendingRef = useRef(false);
   const [activeMode, setActiveMode] = useState<'aprender' | 'praticar' | 'investigar_erro' | 'revisar' | 'desafio' | 'modo_prova'>('aprender');
   const [inputMessage, setInputMessage] = useState<string>('');
@@ -46,6 +47,7 @@ Como posso te guiar hoje? Você pode escolher um dos modos acima ou clicar em um
     privateFetch('/api/tutor/history').then(async response => {
       const result = await response.json();
       if (!response.ok) throw new Error(result.error || 'Falha ao carregar sua conversa.');
+      if (active) setMemoryPersistence(result.persistence);
       if (active && result.messages.length) setMessages(previous => [previous[0], ...result.messages.map((turn: TutorChatMessage) => ({ ...turn, timestamp: new Date(turn.timestamp).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) }))]);
     }).catch(err => { if (active) setHistoryError(err.message); }).finally(() => { if (active) setHistoryLoading(false); });
     return () => { active = false; };
@@ -89,6 +91,7 @@ Como posso te guiar hoje? Você pode escolher um dos modos acima ou clicar em um
 
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || 'Não foi possível conectar ao tutor.');
+      setMemoryPersistence(data.persistence);
 
       const tutorMsg: TutorChatMessage = {
         id: `msg-${Date.now()}-reply`,
@@ -126,7 +129,7 @@ Como posso te guiar hoje? Você pode escolher um dos modos acima ou clicar em um
 
   return (
     <div className="space-y-6 max-w-5xl mx-auto px-4 lg:px-8 py-6">
-      <p role="status" className="text-xs text-slate-400">{historyLoading ? 'Carregando sua conversa…' : currentUser ? 'Conversa salva na sua conta neste servidor. O tutor considera até 80 mensagens recentes, dentro do limite de contexto.' : 'Entre com Google para conversar e salvar seu histórico.'}</p>
+      <p role="status" className="text-xs text-slate-400">{historyLoading ? 'Carregando sua conversa…' : currentUser ? memoryPersistence === 'firestore' ? 'Histórico sincronizado com o Firestore. O tutor considera até 80 mensagens recentes, dentro do limite de contexto.' : memoryPersistence === 'local' ? 'Histórico temporário neste servidor. A memória na nuvem não está ativa.' : 'Aguardando conexão com sua memória na nuvem.' : 'Entre com Google para conversar e salvar seu histórico.'}</p>
       {historyError && <div role="alert" className="text-sm text-amber-200 bg-amber-950/30 border border-amber-900 p-3 rounded-xl">{historyError}<button className="ml-3 underline" onClick={() => setHistoryRetry(n => n + 1)}>Tentar carregar novamente</button></div>}
       {/* Header */}
       <div className="bg-[#121828] border border-slate-800 p-5 rounded-2xl shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">

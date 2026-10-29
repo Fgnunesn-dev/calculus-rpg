@@ -22,17 +22,15 @@ Em **Environment**, adicione:
 
 Não adicione a chave ao GitHub. Não é necessário definir PORT: o servidor usa a variável fornecida pelo Render e escuta em todas as interfaces no modo de produção. O comando de build instala também as dependências de desenvolvimento, pois o projeto usa tsx para iniciar o servidor TypeScript.
 
-## Dados persistentes
+## Memória persistente no Render Free
 
-Para conservar provas, análises e conversas, use um Web Service pago e adicione um Persistent Disk montado em:
+Pode usar **Free** sem disco pago para preservar o aprendizado. O backend usa o Firestore por padrão para diagnósticos (incluindo pontos fortes/fracos, notas legíveis e recomendações) e conversas. XP, habilidades, checklist e anotações continuam no Firestore como antes.
 
-```text
-/opt/render/project/src/data
-```
+**Antes de usar esta versão**, publique o conteúdo atualizado de `firestore.rules` no banco indicado em `firebase-applet-config.json`. As novas coleções privadas são `/users/{uid}/examReports` e `/users/{uid}/tutorExchanges`. O servidor usa o token Firebase do usuário: não precisa de chave administrativa nova nem de Supabase. Sem as novas regras, a API exibe um erro e não anuncia salvamento na nuvem.
 
-Esse caminho pressupõe o runtime nativo Node e Root Directory vazio, como na tabela. Apenas arquivos sob o mount são preservados.
+Os arquivos PDF/JPG/PNG originais continuam temporários no disco do Render. Eles podem desaparecer ao suspender, reiniciar ou republicar. Isso não apaga os diagnósticos e conversas já salvos no Firestore; a interface informa quando o original não está disponível. Para preservar os binários também, seria necessário armazenamento de arquivos externo ou disco persistente pago.
 
-É possível testar a interface no Free, mas esse plano não aceita disco persistente. Nesse caso, provas, análises e conversas gravadas em disco serão perdidas em reinícios, redeploys e suspensão por inatividade. O progresso sincronizado com Firestore é independente desse disco.
+A gratuidade depende da cota do banco Firestore elegível do projeto. Confirme a cota e o plano no console; esta alteração não ativa cobrança nem cria outro banco. O Render continua sujeito à suspensão por inatividade do plano Free e o Gemini mantém suas próprias cotas.
 
 ## Depois do deploy
 
@@ -41,6 +39,6 @@ Esse caminho pressupõe o runtime nativo Node e Root Directory vazio, como na ta
 3. Confirme que Google está habilitado em Sign-in method e que as regras de `firestore.rules` estão publicadas no banco indicado em `firebase-applet-config.json`.
 4. Teste login, anotações na trilha, uma conversa de duas mensagens e upload de uma prova. Recarregue a página para confirmar a persistência.
 
-O localhost e seus arquivos atuais não são migrados automaticamente para o serviço. A publicação no Render não foi realizada nesta sessão; o arquivo descreve a configuração a usar.
+Ao acessar o servidor local atualizado com sua conta, históricos e diagnósticos locais que pertencem ao seu UID são copiados para o Firestore. Faça isso antes de encerrar ou apagar o ambiente antigo. Dados locais não podem ser recuperados se o ambiente antigo já foi perdido. Os PDFs originais não são migrados. A publicação no Render não foi realizada nesta sessão; o arquivo descreve a configuração a usar.
 
 Referências oficiais: https://render.com/docs/deploy-node-express-app, https://render.com/docs/disks e https://render.com/docs/free.

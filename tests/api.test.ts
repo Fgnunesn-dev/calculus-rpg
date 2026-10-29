@@ -19,7 +19,7 @@ test('API integration: authentication, account isolation, uploads, exams, memory
   const ai = { models: { generateContent: async (request: any) => { calls.push(request); return { text: request.config?.responseMimeType === 'application/json' ? JSON.stringify({ isCorrect: false, explanation: 'Justifique os passos.', remediation: 'Use a definição.' }) : 'Vamos continuar com a função anterior.' }; } } };
   const analysis = { title: 'Prova fictícia', summary: 'Respostas não fornecidas.', observedScore: null, maximumScore: null, weaknesses: [], strengths: [], restrictions: ['Sem L’Hôpital'], recommendedModuleIds: ['limits'], questions: [{ number: '1', topic: 'Limites', statement: 'Calcule o limite.', feedback: 'Sem resposta para diagnosticar.', practicePrompt: 'Outro limite.', earnedScore: null, maximumScore: null }] };
   const authenticate = createRequireUser(async token => { if (!['alice', 'bob'].includes(token)) throw new Error('invalid'); return { uid: token }; });
-  const app = createApplication({ authenticate, storage, documents, memory, ai, analyze: async () => analysis, ocr: { processDocument: async () => {} } as any });
+  const app = createApplication({ authenticate, storage, documents, memory, learningStore: null, ai, analyze: async () => analysis, ocr: { processDocument: async () => {} } as any });
   const server = app.listen(0, '127.0.0.1'); await new Promise<void>(resolve => server.once('listening', resolve));
   t.after(() => new Promise<void>((resolve, reject) => server.close(err => err ? reject(err) : resolve())));
   const origin = `http://127.0.0.1:${(server.address() as any).port}`;

@@ -27,6 +27,13 @@ service cloud.firestore {
     function existing() {
       return resource.data;
     }
+    function isValidMemoryRecord(data, recordId) {
+      return data.keys().hasAll(['id', 'createdAt', 'version', 'payload']) &&
+             data.keys().hasOnly(['id', 'createdAt', 'version', 'payload']) &&
+             data.id == recordId && data.version == 1 &&
+             data.createdAt is string && data.createdAt.size() <= 40 &&
+             data.payload is string && data.payload.size() > 0 && data.payload.size() <= 800000;
+    }
 
     // Validation Blueprint: UserProfile
     function isValidUserProfile(data) {
@@ -71,6 +78,18 @@ service cloud.firestore {
       match /state/{stateId} {
         allow read: if isOwner(userId);
         allow create, update: if isOwner(userId) && stateId == 'planner' && incoming().keys().hasOnly(['plan', 'updatedAt']) && incoming().plan is map && incoming().updatedAt is string;
+      }
+      // Durable learning memory. Firebase ID tokens are used by the backend too,
+      // so these requests obey exactly the same owner-only rules.
+      match /examReports/{reportId} {
+        allow read: if isOwner(userId);
+        allow create, update: if isOwner(userId) && isValidId(reportId) && isValidMemoryRecord(incoming(), reportId);
+        allow delete: if isOwner(userId);
+      }
+      match /tutorExchanges/{exchangeId} {
+        allow read: if isOwner(userId);
+        allow create, update: if isOwner(userId) && isValidId(exchangeId) && isValidMemoryRecord(incoming(), exchangeId);
+        allow delete: if isOwner(userId);
       }
 
       // Subcollection: /users/{userId}/skills/{skillId}

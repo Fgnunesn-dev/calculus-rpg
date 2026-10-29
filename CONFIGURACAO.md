@@ -43,13 +43,13 @@ O painel usa a análise da prova selecionada. Se houver apenas enunciados, o ser
 
 ## Armazenamento e publicação
 
-As conversas do tutor são salvas por conta em `data/tutor-conversations/`, fora do controle de versão e da pasta pública. O servidor usa o histórico de até 80 mensagens recentes, limitado a aproximadamente 48 mil caracteres, além da pergunta atual; o arquivo guarda as últimas 200 mensagens. A API de histórico exige o mesmo token Firebase do chat. Trocar de tela não desmonta a conversa em andamento; ao recarregar a página, o histórico salvo é recuperado. Mensagens anteriores à implementação desta persistência que já foram perdidas não podem ser reconstruídas automaticamente.
+As conversas e os diagnósticos agora são salvos no Firestore por conta. Publique as regras atualizadas antes de usar esta versão. Consulte [MEMORIA-NUVEM.md](MEMORIA-NUVEM.md) para ativação, limites e migração dos dados locais ainda existentes. O backend usa o token do usuário, sem chave administrativa nova.
 
-Os novos arquivos ficam em `data/private-files/`, fora da pasta pública. As análises são persistidas em `data/documents.json`, com `ownerUid`. Todas as operações da API de documentos e provas verificam o token Firebase e a propriedade do registro; registros antigos sem proprietário não são compartilhados nem atribuídos automaticamente a alguém.
+Os PDFs e imagens originais continuam em cache privado temporário em data/private-files. O diagnóstico, os pontos fortes/fracos e a conversa permanecem na nuvem mesmo quando esses originais desaparecerem. O arquivo data/documents.json é apenas índice local dos originais disponíveis e fonte de migração de diagnósticos antigos.
 
 A prova e os uploads antigos da demonstração foram preservados em `data/legacy-private/`. Não há migração automática para uma conta: envie a prova novamente após entrar.
 
-Ao hospedar para outras pessoas, execute o backend Node em produção, preserve a pasta `data` em armazenamento persistente, use HTTPS e publique as regras do Firestore. Não basta hospedar somente `dist/`, pois as APIs de análise e os arquivos privados precisam do servidor. O servidor de desenvolvimento no localhost é para análise local. Limites de uso e custos da IA devem ser configurados na conta do provedor antes de uma abertura pública ampla.
+Ao hospedar para outras pessoas, execute o backend Node em produção, use HTTPS e publique as regras do Firestore. O Render Free pode preservar o aprendizado na nuvem; disco persistente só é necessário se quiser preservar também os arquivos binários originais nesta arquitetura. Não basta hospedar somente `dist/`, pois as APIs de análise e os arquivos privados precisam do servidor. O servidor de desenvolvimento no localhost é para análise local. Limites de uso e custos da IA devem ser configurados na conta do provedor antes de uma abertura pública ampla.
 
 ## Validação realizada
 
