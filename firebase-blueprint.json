@@ -1,0 +1,92 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "Perfil do estudante de Engenharia da UFBA no Calculus RPG",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "maxLength": 128 },
+        "name": { "type": "string", "maxLength": 100 },
+        "email": { "type": "string", "maxLength": 120 },
+        "course": { "type": "string", "maxLength": 100 },
+        "university": { "type": "string", "maxLength": 100 },
+        "professor": { "type": "string", "maxLength": 100 },
+        "level": { "type": "number" },
+        "currentXp": { "type": "number" },
+        "nextLevelXp": { "type": "number" },
+        "streakDays": { "type": "number" },
+        "focusEnergy": { "type": "number" },
+        "accuracyRate": { "type": "number" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["uid", "name", "level", "currentXp"]
+    },
+    "UserSkill": {
+      "title": "UserSkill",
+      "description": "Estado de domínio de uma habilidade matemática específica",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "name": { "type": "string", "maxLength": 100 },
+        "category": { "type": "string", "maxLength": 64 },
+        "masteryScore": { "type": "number" },
+        "status": { "type": "string", "enum": ["unlearned", "learning", "unstable", "mastered", "review_due"] },
+        "totalAttempts": { "type": "number" },
+        "successfulAttempts": { "type": "number" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["id", "name", "masteryScore", "status"]
+    },
+    "UserAttempt": {
+      "title": "UserAttempt",
+      "description": "Registro de resolução de exercício pelo estudante",
+      "type": "object",
+      "properties": {
+        "exerciseId": { "type": "string", "maxLength": 64 },
+        "isCorrect": { "type": "boolean" },
+        "hintsUsed": { "type": "number" },
+        "xpAwarded": { "type": "number" },
+        "timestamp": { "type": "string" }
+      },
+      "required": ["exerciseId", "isCorrect", "timestamp"]
+    },
+    "AcademicDocument": {
+      "title": "AcademicDocument",
+      "description": "Metadados e extração de material acadêmico enviado para o S3 e Firestore",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "originalName": { "type": "string", "maxLength": 255 },
+        "mimeType": { "type": "string", "maxLength": 64 },
+        "sizeBytes": { "type": "number" },
+        "s3Bucket": { "type": "string", "maxLength": 100 },
+        "s3Key": { "type": "string", "maxLength": 255 },
+        "s3Url": { "type": "string", "maxLength": 512 },
+        "status": { "type": "string", "enum": ["pending", "processing", "completed", "failed"] },
+        "ocrEngine": { "type": "string", "maxLength": 64 },
+        "uploadedBy": { "type": "string", "maxLength": 128 },
+        "uploadedAt": { "type": "string" }
+      },
+      "required": ["id", "originalName", "s3Key", "status"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "Perfis individuais dos estudantes vinculados ao UID"
+    },
+    "/users/{userId}/skills/{skillId}": {
+      "schema": "UserSkill",
+      "description": "Progresso e métricas de cada habilidade do estudante"
+    },
+    "/users/{userId}/attempts/{attemptId}": {
+      "schema": "UserAttempt",
+      "description": "Histórico de tentativas e exercícios resolvidos"
+    },
+    "/documents/{documentId}": {
+      "schema": "AcademicDocument",
+      "description": "Metadados dos materiais acadêmicos e status de OCR"
+    }
+  }
+}

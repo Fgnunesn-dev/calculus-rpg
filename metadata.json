@@ -1,0 +1,6 @@
+{
+  "name": "Calculus RPG",
+  "description": "Plataforma inteligente e adaptativa de aprendizagem de Cálculo A para estudantes de Engenharia da UFBA, combinando tutor de IA, análise de listas e provas reais, arena de exercícios e mecânicas de RPG.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

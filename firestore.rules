@@ -1,0 +1,93 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Global Deny Catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Hardened Helper Primitives
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // Validation Blueprint: UserProfile
+    function isValidUserProfile(data) {
+      return data.keys().hasAll(['uid', 'name', 'level', 'currentXp']) &&
+             data.uid is string && data.uid.size() <= 128 &&
+             data.name is string && data.name.size() <= 100 &&
+             data.level is number && data.level >= 1 &&
+             data.currentXp is number && data.currentXp >= 0;
+    }
+
+    // Validation Blueprint: UserSkill
+    function isValidUserSkill(data) {
+      return data.keys().hasAll(['id', 'name', 'masteryScore', 'status']) &&
+             data.id is string && data.id.size() <= 64 &&
+             data.name is string && data.name.size() <= 100 &&
+             data.masteryScore is number && data.masteryScore >= 0 && data.masteryScore <= 100 &&
+             data.status in ['unlearned', 'learning', 'unstable', 'mastered', 'review_due'];
+    }
+
+    // Validation Blueprint: UserAttempt
+    function isValidUserAttempt(data) {
+      return data.keys().hasAll(['exerciseId', 'isCorrect', 'timestamp']) &&
+             data.exerciseId is string && data.exerciseId.size() <= 64 &&
+             data.isCorrect is bool &&
+             data.timestamp is string;
+    }
+
+    // Validation Blueprint: AcademicDocument
+    function isValidAcademicDocument(data) {
+      return data.keys().hasAll(['id', 'originalName', 's3Key', 'status']) &&
+             data.id is string && data.id.size() <= 128 &&
+             data.originalName is string && data.originalName.size() <= 255 &&
+             data.s3Key is string && data.s3Key.size() <= 255 &&
+             data.status in ['pending', 'processing', 'completed', 'failed'];
+    }
+
+    // Collection: /users/{userId}
+    match /users/{userId} {
+      allow get: if isOwner(userId);
+      allow create: if isOwner(userId) && isValidUserProfile(incoming()) && incoming().uid == userId;
+      allow update: if isOwner(userId) && isValidUserProfile(incoming()) && incoming().uid == userId;
+
+      // Subcollection: /users/{userId}/skills/{skillId}
+      match /skills/{skillId} {
+        allow read: if isOwner(userId);
+        allow create, update: if isOwner(userId) && isValidUserSkill(incoming()) && incoming().id == skillId;
+      }
+
+      // Subcollection: /users/{userId}/attempts/{attemptId}
+      match /attempts/{attemptId} {
+        allow read: if isOwner(userId);
+        allow create: if isOwner(userId) && isValidUserAttempt(incoming());
+      }
+    }
+
+    // Collection: /documents/{documentId}
+    match /documents/{documentId} {
+      allow get, list: if isSignedIn();
+      allow create: if isSignedIn() && isValidAcademicDocument(incoming());
+      allow update: if isSignedIn() && (resource.data.uploadedBy == request.auth.uid || request.auth.token.email == 'fg.gabriell13@gmail.com');
+      allow delete: if isSignedIn() && (resource.data.uploadedBy == request.auth.uid || request.auth.token.email == 'fg.gabriell13@gmail.com');
+    }
+  }
+}
