@@ -1,4 +1,5 @@
 import { MathText } from './MathText';
+import { assessmentLabels } from '../lib/examProgress';
 import React, { useState } from 'react';
 import { SkillNode, UserStats } from '../types/calculus';
 import { 
@@ -111,18 +112,19 @@ export const SkillTree: React.FC<SkillTreeProps> = ({ skills, user, onSelectSkil
                           )}
                         </div>
 
-                        <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                        {skill.examDiagnostic && <p className={`text-xs ${skill.examDiagnostic.status === 'needs_review' ? 'text-amber-300' : 'text-teal-300'}`}>{assessmentLabels[skill.examDiagnostic.status]} · prova</p>}
+                        {skill.totalAttempts > 0 && <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
                           <div
                             className={`h-full rounded-full ${
                               isMastered ? 'bg-emerald-500' : isUnstable ? 'bg-rose-500' : 'bg-cyan-500'
                             }`}
                             style={{ width: `${skill.masteryScore}%` }}
                           />
-                        </div>
+                        </div>}
 
                         <div className="flex items-center justify-between text-[10px] font-mono text-slate-500">
-                          <span>{skill.masteryScore}% Maestria</span>
-                          <span className="uppercase text-purple-300 font-semibold">{skill.status.replace('_', ' ')}</span>
+                          <span>{skill.totalAttempts ? `${skill.masteryScore}% nos exercícios` : 'Sem tentativas na arena'}</span>
+                          {!skill.examDiagnostic && <span className="text-slate-400">{skill.totalAttempts ? skill.status.replace('_', ' ') : 'Não avaliado'}</span>}
                         </div>
                       </div>
                     );
@@ -150,13 +152,14 @@ export const SkillTree: React.FC<SkillTreeProps> = ({ skills, user, onSelectSkil
             </p>
 
             {/* Metrics */}
+            {selectedSkill.examDiagnostic && <section className="bg-slate-900 border border-teal-900 p-3 rounded-xl space-y-2"><h4 className="text-sm text-teal-300">{assessmentLabels[selectedSkill.examDiagnostic.status]}</h4><p className="text-sm text-slate-300"><MathText text={selectedSkill.examDiagnostic.evidence} /></p><p className="text-xs text-slate-500">{selectedSkill.examDiagnostic.source}</p></section>}
             <div className="grid grid-cols-2 gap-2 text-xs font-mono">
               <div className="bg-slate-900/80 p-2.5 rounded-xl border border-slate-800">
                 <span className="text-slate-500 block text-[10px]">Taxa de Acerto:</span>
                 <span className="text-purple-300 font-bold text-sm">
                   {selectedSkill.totalAttempts > 0 
                     ? Math.round((selectedSkill.successfulAttempts / selectedSkill.totalAttempts) * 100) 
-                    : 0}%
+                    : '—'}{selectedSkill.totalAttempts > 0 ? '%' : ''}
                 </span>
               </div>
 

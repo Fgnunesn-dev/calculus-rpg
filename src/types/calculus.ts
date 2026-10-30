@@ -13,6 +13,7 @@ export interface SkillNode {
   totalAttempts: number;
   successfulAttempts: number;
   evidence: string[];
+  examDiagnostic?: { status: 'demonstrated' | 'partial' | 'needs_review'; evidence: string; source: string };
 }
 
 export type ErrorClassification = 

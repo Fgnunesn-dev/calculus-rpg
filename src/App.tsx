@@ -13,10 +13,13 @@ import { PATH_EXERCISES } from './data/studyPath';
 import { INITIAL_EXERCISES } from './data/initialData';
 import { ExerciseItem } from './types/calculus';
 import { Trophy } from 'lucide-react';
+import { examProgress, skillsWithExamEvidence } from './lib/examProgress';
 
 function CalculusRpgApp() {
   const { currentUser, userStats, skills, awardXp, updateSkillMastery, authError, isLoading } = useAuth();
   const [reports, setReports] = useState<ExamReport[]>([]);
+  const assessedSkills = skillsWithExamEvidence(skills, reports);
+  const recommendedModules = examProgress(reports).recommended;
   const [reportsLoading, setReportsLoading] = useState(false);
   const [reportsError, setReportsError] = useState<string | null>(null);
   const [plannerModule, setPlannerModule] = useState<string | undefined>();
@@ -104,7 +107,7 @@ function CalculusRpgApp() {
           <ExamWorkspace view="dashboard" reports={reports} loading={reportsLoading} error={reportsError} onReport={report => setReports(prev => [report, ...prev])} onNavigate={navigate} onPractice={handlePracticeFromDocument} />
         )}
 
-        {currentView === 'planner' && <StudyPlanner key={plannerModule || 'all'} initialModule={plannerModule} onPractice={handleStartMission} />}
+        {currentView === 'planner' && <StudyPlanner key={plannerModule || 'all'} initialModule={plannerModule} recommendedModules={recommendedModules} onPractice={handleStartMission} />}
 
         {currentView === 'arena' && (
           <LearningArena
@@ -135,7 +138,7 @@ function CalculusRpgApp() {
 
         {currentView === 'skills' && (
           <SkillTree
-            skills={skills}
+            skills={assessedSkills}
             user={userStats}
             onSelectSkillToPractice={() => setCurrentView('arena')}
           />

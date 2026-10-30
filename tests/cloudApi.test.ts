@@ -10,7 +10,7 @@ import { S3StorageService } from '../server/s3Storage';
 import { TutorMemory } from '../server/tutorMemory';
 import { FirestoreLearningStore } from '../server/learningStore';
 import { fakeFirestore } from './helpers/firestore';
-const analysis = { title: 'Prova teste', summary: 'Resumo.', observedScore: null, maximumScore: null, weaknesses: ['Fatoração'], strengths: ['Gráficos'], restrictions: [], recommendedModuleIds: ['algebra'], questions: [{ number: '1', topic: 'Limites', statement: 'Limite teste.', feedback: 'Justifique.', practicePrompt: 'Pratique.', earnedScore: null, maximumScore: null }] };
+const analysis = { title: 'Prova teste', summary: 'Resumo.', observedScore: null, maximumScore: null, weaknesses: ['Fatoração'], strengths: ['Gráficos'], restrictions: [], recommendedModuleIds: ['algebra'], assessments: [{ moduleId: 'algebra', skillIds: ['algebra-fatoracao'], status: 'needs_review' as const, evidence: 'Cancelou parcelas na questão 1.', studentWork: 'Cancelamento de parcelas visível na segunda linha.', questionNumbers: ['1'] }], questions: [{ number: '1', topic: 'Limites', statement: 'Limite teste.', feedback: 'Justifique.', practicePrompt: 'Pratique.', earnedScore: null, maximumScore: null }] };
 const authenticate = createRequireUser(async token => { if (!['alice', 'bob'].includes(token)) throw new Error('invalid'); return { uid: token }; });
 async function instance(transport: typeof fetch, cacheFails = false) {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'calculus-cloud-'));
@@ -38,6 +38,7 @@ test('reports and tutor context survive a Render-like loss of all local disk sta
   const reports = await (await restarted.request('/api/exams')).json();
   assert.equal(reports.persistence, 'firestore'); assert.equal(reports.exams.length, 1); assert.equal(reports.exams[0].originalAvailable, false);
   assert.deepEqual(reports.exams[0].analysis.weaknesses, ['Fatoração']); assert.deepEqual(reports.exams[0].analysis.strengths, ['Gráficos']);
+  assert.deepEqual(reports.exams[0].analysis.assessments, analysis.assessments);
   assert.equal((await (await restarted.request('/api/exams', 'bob')).json()).exams.length, 0);
   assert.equal((await (await restarted.request('/api/tutor/history')).json()).messages.length, 2);
   assert.equal((await (await restarted.request('/api/tutor/history', 'bob')).json()).messages.length, 0);

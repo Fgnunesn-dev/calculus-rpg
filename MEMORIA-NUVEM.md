@@ -46,3 +46,9 @@ Referências: https://firebase.google.com/docs/firestore/use-rest-api e https://
 ## Troca do projeto Starter para Spark
 
 O projeto anterior do AI Studio foi mantido. O UID do mesmo e-mail pode mudar entre projetos Firebase: os dados antigos não são automaticamente atribuídos ao novo UID. Não altere proprietários de registros sem verificar a identidade nas duas contas. Os arquivos locais e o banco antigo devem ser preservados até uma migração específica. Uma conta nova no Spark pode iniciar sem o progresso do projeto anterior.
+
+## Diagnóstico inicial pelas resoluções
+
+Novas análises incluem avaliações por módulo, com passos observados do estudante e referência à questão. O painel mostra conhecimento demonstrado, em desenvolvimento, revisão necessária e tópicos ainda não avaliados. A árvore exibe evidências da prova e a organização sugere prioridades. A avaliação não concede XP nem inventa tentativas ou percentuais de domínio. As evidências mais recentes de cada tópico prevalecem; ausência de resposta não apaga um diagnóstico anterior. Provas antigas sem avaliação estruturada precisam ser reenviadas para gerar esse novo diagnóstico.
+
+Validação: 39 testes automatizados, TypeScript e build de produção; chamada real ao Gemini com duas provas sintéticas confirmou acerto de fatoração, erro de limite e ausência de diagnóstico pessoal quando há apenas enunciados. Nenhum diagnóstico sintético foi salvo numa conta real.
