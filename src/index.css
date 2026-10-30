@@ -58,3 +58,15 @@ button:disabled { cursor: not-allowed; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
 }
+
+/* Keep intrinsic select and math widths inside cards on narrow screens. */
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+#root, main { min-width: 0; width: 100%; }
+main .grid > *, .study-card { min-width: 0; }
+select, textarea, input { min-width: 0; max-width: 100%; }
+.katex-display { max-width: 100%; }
+@media (max-width: 639px) {
+  /* Safari zooms focused form controls when their text is smaller than 16px. */
+  input:not([type="checkbox"]):not([type="radio"]), textarea, select { font-size: 16px; }
+  main { overflow-wrap: anywhere; }
+}

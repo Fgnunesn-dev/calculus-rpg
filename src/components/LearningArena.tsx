@@ -112,11 +112,11 @@ export const LearningArena: React.FC<LearningArenaProps> = ({
   };
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto px-4 lg:px-8 py-6">
+    <div className="space-y-6 w-full min-w-0 max-w-7xl mx-auto px-4 lg:px-8 py-6">
       {/* Exercise Navigation & Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#121828] border border-slate-800 p-5 rounded-2xl shadow-xl">
-        <div>
-          <div className="flex items-center gap-2 mb-1">
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-2 mb-1">
             <span className="text-xs font-mono font-bold text-cyan-400 bg-cyan-950/60 border border-cyan-800/60 px-2.5 py-0.5 rounded">
               {currentExercise.questionNumber}
             </span>
@@ -134,11 +134,11 @@ export const LearningArena: React.FC<LearningArenaProps> = ({
         </div>
 
         {/* Change exercise selector */}
-        <div className="flex items-center gap-2">
+        <div className="flex min-w-0 w-full sm:w-64 sm:shrink-0 items-center gap-2">
           <select
             value={currentExercise.id}
             onChange={(e) => onSelectAnotherExercise(e.target.value)}
-            className="bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-purple-500"
+            aria-label="Selecionar exercício" className="w-full min-w-0 max-w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-purple-500"
           >
             {availableExercises.map((ex) => (
               <option key={ex.id} value={ex.id}>
@@ -155,7 +155,7 @@ export const LearningArena: React.FC<LearningArenaProps> = ({
         <div className="lg:col-span-8 space-y-5">
           {/* Enunciado Card */}
           <div className="bg-[#121828] border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-2">
               <span className="text-xs font-mono text-slate-400 font-semibold uppercase tracking-wider">
                 {currentExercise.id.startsWith('path-') ? 'Desafio complementar' : 'Enunciado do exercício'}
               </span>
@@ -325,7 +325,7 @@ export const LearningArena: React.FC<LearningArenaProps> = ({
         <div className="lg:col-span-4 space-y-5">
           {/* Hints Deck (Nível 1 a 5) */}
           <div className="bg-[#121828] border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-2">
               <div className="flex items-center gap-1.5 text-amber-300 font-semibold text-sm">
                 <Lightbulb className="w-4 h-4 text-amber-400" />
                 <span>Hierarquia de Dicas (1 a 5)</span>
