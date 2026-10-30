@@ -4,7 +4,7 @@ import { ExamReport } from './types/exam';
 import { privateFetch } from './lib/api';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { TopBar } from './components/TopBar';
-import { LearningArena } from './components/LearningArena';
+import { ArenaBrowser } from './components/ArenaBrowser';
 import { AiTutor } from './components/AiTutor';
 import { DocumentLibrary } from './components/DocumentLibrary';
 import { SkillTree } from './components/SkillTree';
@@ -110,8 +110,7 @@ function CalculusRpgApp() {
         {currentView === 'planner' && <StudyPlanner key={plannerModule || 'all'} initialModule={plannerModule} recommendedModules={recommendedModules} onPractice={handleStartMission} />}
 
         {currentView === 'arena' && (
-          <LearningArena
-            key={selectedExerciseId}
+          <ArenaBrowser
             currentExercise={currentExercise}
             onSelectAnotherExercise={(id) => setSelectedExerciseId(id)}
             availableExercises={exercises}

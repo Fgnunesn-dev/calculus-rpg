@@ -133,20 +133,6 @@ export const LearningArena: React.FC<LearningArenaProps> = ({
           </div>
         </div>
 
-        {/* Change exercise selector */}
-        <div className="flex min-w-0 w-full sm:w-64 sm:shrink-0 items-center gap-2">
-          <select
-            value={currentExercise.id}
-            onChange={(e) => onSelectAnotherExercise(e.target.value)}
-            aria-label="Selecionar exercício" className="w-full min-w-0 max-w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-purple-500"
-          >
-            {availableExercises.map((ex) => (
-              <option key={ex.id} value={ex.id}>
-                {ex.questionNumber}: {ex.title}
-              </option>
-            ))}
-          </select>
-        </div>
       </div>
 
       {/* Main Arena Workspace */}
