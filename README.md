@@ -23,7 +23,7 @@ Combina tutoria pedagógica com inteligência artificial, pipeline de ingestão 
 ### Tecnologias Utilizadas
 - **Frontend**: React 19, TypeScript, Tailwind CSS v4, KaTeX (renderização de fórmulas), Lucide Icons, Canvas/SVG interativo para gráficos e retas tangentes.
 - **Backend**: Node.js, Express, Multer para parsing multipart, Tsx.
-- **Persistência & Autenticação**: Firebase Firestore (`ai-studio-calculusrpg-b0acb931-cf8a-4bbe-9cb9-bffe34917db5`) e Firebase Authentication com Google Sign-In.
+- **Persistência & Autenticação**: Firebase Firestore (`(default)`) e Firebase Authentication com Google Sign-In.
 - **Regras de Segurança**: `firestore.rules` endurecidas com validação de esquema em duas fases e proteção ABAC.
 - **Armazenamento S3**: Camada compatível com S3 (AWS S3, MinIO, Cloudflare R2 ou armazenamento durável local).
 - **OCR & Processamento Documental**: Pipeline multi-motor com extração de texto bruto, segmentação de exercícios e detecção de fórmulas matemáticas.

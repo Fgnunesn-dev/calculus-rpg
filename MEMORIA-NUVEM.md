@@ -1,10 +1,10 @@
 # Preservação do aprendizado sem disco pago
 
-Esta versão usa o Firestore por padrão para manter diagnósticos e conversas independentemente do disco do Render. Não cria outro banco nem ativa faturamento. O plano gratuito continua sujeito às cotas do banco elegível do projeto.
+Esta versão usa o Firestore por padrão para manter diagnósticos e conversas independentemente do disco do Render. O projeto `calculus-rpg` e seu banco `(default)` foram configurados no plano Spark, sem ativar faturamento. O plano gratuito continua sujeito às cotas do banco elegível do projeto.
 
 ## Ativação obrigatória
 
-No console Firebase, selecione o projeto `useful-sorter-pv8b6` e o banco `ai-studio-calculusrpg-b0acb931-cf8a-4bbe-9cb9-bffe34917db5`. Em **Firestore Database → Rules**, publique o conteúdo completo e atualizado de `firestore.rules` deste repositório.
+No console Firebase, selecione o projeto `calculus-rpg` e o banco `(default)`. Em **Firestore Database → Rules**, publique o conteúdo completo e atualizado de `firestore.rules` deste repositório.
 
 As regras atualizadas acrescentam coleções privadas por conta:
 
@@ -39,6 +39,10 @@ Faça isso antes de desligar ou perder o ambiente antigo. Um deploy novo no Rend
 
 Os testes usam uma simulação da API REST e duas instâncias de servidor com discos locais distintos: após perder completamente o primeiro disco, a segunda instância recupera conversas, diagnósticos, pontos fortes e fracos. Também verificam isolamento por conta, migração local, limites de tamanho e comportamento em falhas de nuvem ou de cache de arquivos.
 
-A publicação efetiva das regras e um teste com dois logins reais ainda precisam ser realizados no Firebase do proprietário. Os testes simulados não confirmam o estado do serviço remoto.
+As regras foram publicadas no novo projeto. Login real e restauração de uma conversa após recarregar foram confirmados no localhost. Um segundo login e outro dispositivo ainda não foram testados. Os testes simulados não confirmam o estado do serviço remoto.
 
 Referências: https://firebase.google.com/docs/firestore/use-rest-api e https://firebase.google.com/docs/firestore/quotas.
+
+## Troca do projeto Starter para Spark
+
+O projeto anterior do AI Studio foi mantido. O UID do mesmo e-mail pode mudar entre projetos Firebase: os dados antigos não são automaticamente atribuídos ao novo UID. Não altere proprietários de registros sem verificar a identidade nas duas contas. Os arquivos locais e o banco antigo devem ser preservados até uma migração específica. Uma conta nova no Spark pode iniciar sem o progresso do projeto anterior.

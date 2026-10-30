@@ -30,7 +30,7 @@ Pode usar **Free** sem disco pago para preservar o aprendizado. O backend usa o 
 
 Os arquivos PDF/JPG/PNG originais continuam temporários no disco do Render. Eles podem desaparecer ao suspender, reiniciar ou republicar. Isso não apaga os diagnósticos e conversas já salvos no Firestore; a interface informa quando o original não está disponível. Para preservar os binários também, seria necessário armazenamento de arquivos externo ou disco persistente pago.
 
-A gratuidade depende da cota do banco Firestore elegível do projeto. Confirme a cota e o plano no console; esta alteração não ativa cobrança nem cria outro banco. O Render continua sujeito à suspensão por inatividade do plano Free e o Gemini mantém suas próprias cotas.
+A gratuidade depende da cota do banco Firestore elegível do projeto. Confirme a cota e o plano no console; o projeto atual é `calculus-rpg`, com banco `(default)` no plano Spark, sem faturamento ativado. O Render continua sujeito à suspensão por inatividade do plano Free e o Gemini mantém suas próprias cotas.
 
 ## Depois do deploy
 

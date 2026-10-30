@@ -2,9 +2,9 @@
 
 ## 1. Liberar o login no ambiente local
 
-O erro observado neste ambiente foi `auth/unauthorized-domain`.
+O projeto atual é `calculus-rpg`, no plano gratuito Spark. Google está habilitado e `localhost` consta nos domínios autorizados. O projeto anterior do AI Studio Starter bloqueava a ativação da Token Service API; ele foi preservado, mas não é mais a configuração ativa.
 
-1. Abra https://console.firebase.google.com/project/useful-sorter-pv8b6/authentication/settings.
+1. Abra https://console.firebase.google.com/project/calculus-rpg/authentication/settings.
 2. Em **Authentication → Settings → Authorized domains**, adicione `localhost` (somente o domínio, sem `http://` e sem `:3000`).
 3. Em **Authentication → Sign-in method**, habilite **Google** e configure o e-mail de suporte, caso ainda não esteja habilitado.
 4. Abra http://localhost:3000 no Chrome ou Edge e clique em **Entrar com Google**. O navegador interno pode bloquear a janela de autenticação.
@@ -14,11 +14,11 @@ O erro observado neste ambiente foi `auth/unauthorized-domain`.
 
 ## 2. Aplicar as regras do progresso
 
-Na seção **Firestore Database**, selecione o banco `ai-studio-calculusrpg-b0acb931-cf8a-4bbe-9cb9-bffe34917db5` (ou o ID configurado no arquivo JSON). Na aba **Rules**, publique o conteúdo de `firestore.rules` deste projeto.
+Na seção **Firestore Database**, selecione o banco `(default)` (ou o ID configurado no arquivo JSON). Na aba **Rules**, publique o conteúdo de `firestore.rules` deste projeto.
 
 Cada pessoa acessa somente `/users/{seu uid}`. O perfil e as habilidades ficam no documento do usuário; a organização fica em `/users/{uid}/state/planner`. O indicador de sincronização informa se o salvamento na nuvem foi concluído. Sem login, a trilha fica apenas neste navegador. Contas novas começam sem notas, tentativas e dificuldades herdadas do perfil de demonstração.
 
-As regras foram atualizadas localmente, mas não foram publicadas no Firebase por esta sessão. O login real e a sincronização entre dispositivos precisam ser conferidos depois da configuração na conta administrativa.
+As regras deste repositório foram publicadas no banco `(default)` do projeto `calculus-rpg`. Login Google real confirmado no localhost. Uma mensagem real do tutor foi salva e recuperada do Firestore após recarregar a página. A sincronização em um segundo dispositivo ainda não foi testada.
 
 ## 3. Habilitar a IA
 
@@ -26,7 +26,7 @@ Crie um arquivo `.env` na raiz do projeto com:
 
 ```dotenv
 GEMINI_API_KEY=sua_chave_real
-GEMINI_MODEL=gemini-3.8-flash
+GEMINI_MODEL=gemini-3.5-flash-lite
 ```
 
 Obtenha a chave no Google AI Studio e confirme que o modelo e a cota estão disponíveis na sua conta. A chave fica somente no servidor. Reinicie o servidor após alterar `.env`. O modelo pode ser substituído por outro compatível com PDF/imagens e saída JSON na sua conta.
@@ -56,6 +56,6 @@ Ao hospedar para outras pessoas, execute o backend Node em produção, use HTTPS
 - TypeScript e build de produção.
 - Testes de contas sem histórico herdado, identidade validada, propriedade dos documentos e análise sem notas inventadas pelo parser.
 - Requisições sem token e com token inválido bloqueadas pela API.
-- Login Google real e análise Gemini real dependem das configurações externas acima; não foram simulados como resultados de produção.
+- Login Google e conversa Gemini reais foram confirmados no localhost, com recuperação do histórico após recarregar. Upload e análise de provas são cobertos pelos testes automatizados; não foi enviada uma prova pessoal ao novo projeto durante esta configuração.
 
 Referências: https://firebase.google.com/docs/auth/web/google-signin e https://firebase.google.com/docs/auth/admin/verify-id-tokens.

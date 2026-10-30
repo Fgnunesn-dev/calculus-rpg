@@ -1,12 +1,12 @@
 {
-  "projectId": "useful-sorter-pv8b6",
-  "appId": "1:218258760680:web:e961d97ff673b44e8e3a5d",
-  "apiKey": "AIzaSyDPKCaR0pyXpdPNHt0iGTZISwJY6_Otq7w",
-  "authDomain": "useful-sorter-pv8b6.firebaseapp.com",
-  "firestoreDatabaseId": "ai-studio-calculusrpg-b0acb931-cf8a-4bbe-9cb9-bffe34917db5",
-  "storageBucket": "useful-sorter-pv8b6.firebasestorage.app",
-  "messagingSenderId": "218258760680",
+  "projectId": "calculus-rpg",
+  "appId": "1:5716889563:web:eb3bcb0a96f14c33c521fe",
+  "apiKey": "AIzaSyB-8pGon9siO-8TXBq9JDiSHvZgsvJQJDQ",
+  "authDomain": "calculus-rpg.firebaseapp.com",
+  "firestoreDatabaseId": "(default)",
+  "storageBucket": "calculus-rpg.firebasestorage.app",
+  "messagingSenderId": "5716889563",
   "measurementId": "",
-  "oAuthClientId": "218258760680-e7a0g4jfjtjmgb001fa65fp1t05craoa.apps.googleusercontent.com",
+  "oAuthClientId": "",
   "recaptchaSiteKey": ""
 }
