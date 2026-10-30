@@ -5,21 +5,44 @@ import { MathView } from './MathView';
 import { useAuth } from '../context/AuthContext';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { auth, db } from '../lib/firebase';
+import { GuidedLesson } from './GuidedLesson';
+import { SavedLesson, NotesReview } from '../types/lesson';
+import { NotesFeedback } from './NotesFeedback';
 
 interface PlannerState {
+  guidedLessons: Record<string, SavedLesson>;
+  guidedTopics: Record<string, number>;
+  noteReviews: Record<string, NotesReview>;
   checked: string[];
   selected: string;
   notes: Record<string, string>;
   weeklyGoal: number;
   studied: Record<string, string[]>;
 }
-const initial: PlannerState = { checked: [], selected: 'algebra', notes: {}, weeklyGoal: 4, studied: {} };
+const initial: PlannerState = { guidedLessons: {}, guidedTopics: {}, noteReviews: {}, checked: [], selected: 'algebra', notes: {}, weeklyGoal: 4, studied: {} };
 const storageKey = 'calculus-rpg-study-plan-v1';
+function readGuidedLessons(raw: unknown): Record<string, SavedLesson> {
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return {};
+  return Object.fromEntries(Object.entries(raw).slice(-8).filter(([key, value]) => {
+    const [moduleId, index] = key.split(':');
+    const module = STUDY_MODULES.find(m => m.id === moduleId);
+    const lesson = value as SavedLesson;
+    return module && /^\d+$/.test(index || '') && Number(index) < module.lessons.length && lesson && Number.isInteger(lesson.step) && lesson.step >= 0 && lesson.content && typeof lesson.content.title === 'string' && lesson.content.title.length <= 160 && Array.isArray(lesson.content.steps) && lesson.content.steps.length >= 3 && lesson.content.steps.length <= 8 && lesson.content.steps.every(step => step && ['title', 'explanation', 'example', 'checkpoint', 'answer'].every(field => typeof (step as any)[field] === 'string' && (step as any)[field].length <= 1800));
+  }));
+}
+function readNoteReviews(raw: unknown): Record<string, NotesReview> {
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return {};
+  return Object.fromEntries(Object.entries(raw).slice(-14).filter(([key, value]) => {
+    const review = value as NotesReview;
+    return STUDY_MODULES.some(m => m.id === key) && review && typeof review.notes === 'string' && review.notes.length <= 6000 && typeof review.feedback === 'string' && review.feedback.length <= 10000 && typeof review.createdAt === 'string';
+  }));
+}
+function readGuidedTopics(raw: unknown): Record<string, number> { return !raw || typeof raw !== 'object' ? {} : Object.fromEntries(Object.entries(raw).filter(([id, index]) => Number.isInteger(index) && Number(index) >= 0 && Number(index) < (STUDY_MODULES.find(m => m.id === id)?.lessons.length || 0))); }
 function readPlan(key: string): PlannerState {
   try {
     const value = JSON.parse(localStorage.getItem(key) || 'null');
     if (!value || !Array.isArray(value.checked)) return initial;
-    return { checked: value.checked.filter((v: unknown) => typeof v === 'string'), selected: STUDY_MODULES.some(m => m.id === value.selected) ? value.selected : 'algebra', notes: value.notes && typeof value.notes === 'object' ? value.notes : {}, weeklyGoal: [2, 3, 4, 5, 6, 7].includes(value.weeklyGoal) ? value.weeklyGoal : 4, studied: value.studied && typeof value.studied === 'object' ? value.studied : {} };
+    return { guidedLessons: readGuidedLessons(value.guidedLessons), guidedTopics: readGuidedTopics(value.guidedTopics), noteReviews: readNoteReviews(value.noteReviews), checked: value.checked.filter((v: unknown) => typeof v === 'string'), selected: STUDY_MODULES.some(m => m.id === value.selected) ? value.selected : 'algebra', notes: value.notes && typeof value.notes === 'object' ? value.notes : {}, weeklyGoal: [2, 3, 4, 5, 6, 7].includes(value.weeklyGoal) ? value.weeklyGoal : 4, studied: value.studied && typeof value.studied === 'object' ? value.studied : {} };
   } catch { return initial; }
 }
 const dayKey = (date: Date) => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
@@ -42,7 +65,7 @@ export function StudyPlanner({ onPractice, initialModule, recommendedModules = [
       const saved = snapshot.data()?.plan;
       let localSavedAt = 0;
       try { localSavedAt = JSON.parse(localStorage.getItem(accountKey) || '{}').savedAt || 0; } catch { /* keep zero */ }
-      if (saved && Array.isArray(saved.checked) && saved.notes && saved.studied && Date.parse(snapshot.data()?.updatedAt || '') >= localSavedAt) setPlanState({ ...initial, ...saved, selected: initialModule || (STUDY_MODULES.some(m => m.id === saved.selected) ? saved.selected : 'algebra') });
+      if (saved && Array.isArray(saved.checked) && saved.notes && saved.studied && Date.parse(snapshot.data()?.updatedAt || '') >= localSavedAt) setPlanState({ ...initial, ...saved, guidedLessons: readGuidedLessons(saved.guidedLessons), guidedTopics: readGuidedTopics(saved.guidedTopics), noteReviews: readNoteReviews(saved.noteReviews), selected: initialModule || (STUDY_MODULES.some(m => m.id === saved.selected) ? saved.selected : 'algebra') });
       setCloudReady(true); setCloudLoading(false);
     }).catch(() => { if (active) { setCloudStatus('Não foi possível carregar o plano da nuvem. As alterações ficam locais até reabrir esta área com conexão.'); setCloudLoading(false); } });
     return () => { active = false; };
@@ -113,12 +136,13 @@ export function StudyPlanner({ onPractice, initialModule, recommendedModules = [
           <div className="flex flex-wrap gap-3 mt-5"><button className="study-primary" onClick={() => onPractice(selected.exerciseId)}>Praticar na arena <ArrowRight size={15} /></button><button className="study-secondary" aria-pressed={Boolean(plan.studied[today]?.includes(selected.id))} onClick={logSession}><Check size={15} />{plan.studied[today]?.includes(selected.id) ? 'Estudo registrado · desfazer' : 'Registrar estudo de hoje'}</button></div>
         </section>
 
+        <GuidedLesson key={selected.id} module={selected} signedIn={Boolean(currentUser)} saved={plan.guidedLessons || {}} topicIndex={plan.guidedTopics?.[selected.id] || 0} onTopicChange={index => setPlan(p => ({ ...p, guidedTopics: { ...p.guidedTopics, [selected.id]: index } }))} onSave={(key, value) => setPlan(p => ({ ...p, guidedLessons: Object.fromEntries([...Object.entries(p.guidedLessons || {}).filter(([id]) => id !== key), [key, value]].slice(-8)) }))} />
         <div className="grid md:grid-cols-2 gap-5">
           <section className="study-card p-5"><h3 className="font-semibold text-sm flex items-center gap-2"><BookOpen size={16} className="text-teal-300" />Exemplo guiado</h3><p className="text-sm text-slate-300 leading-relaxed mt-4">{selected.example}</p><button className="text-xs text-teal-300 underline underline-offset-4 mt-4" aria-expanded={showSolution} onClick={() => setShowSolution(v => !v)}>{showSolution ? 'Ocultar resolução' : 'Conferir raciocínio'}</button>{showSolution && <p className="text-xs text-slate-400 mt-3 leading-relaxed">{selected.solution}</p>}<p className="text-[10px] text-slate-500 mt-4">Exemplo autoral · treino de justificativa</p></section>
           <section className="study-card p-5"><h3 className="font-semibold text-sm flex items-center gap-2"><ExternalLink size={16} className="text-teal-300" />Leitura complementar</h3><a href={selected.resource.url} target="_blank" rel="noopener noreferrer" className="block text-sm text-teal-200 hover:underline mt-4">{selected.resource.title} ↗</a><p className="text-xs text-slate-500 mt-2">{selected.resource.language}</p><a href="https://www.gma.uff.br/calculo1/index.php" target="_blank" rel="noopener noreferrer" className="block text-sm text-teal-200 hover:underline mt-4">UFF · Curso de Cálculo 1 ↗</a><p className="text-xs text-slate-500 mt-2">Português · funções, limites e derivadas</p><p className="text-xs text-slate-400 leading-relaxed mt-3">Use para aprofundar a teoria. Na avaliação, priorize os enunciados, métodos e restrições dos materiais da professora.</p><a href="https://assets.openstax.org/oscms-prodcms/media/documents/calculus-volume-1_-_WEB.pdf" target="_blank" rel="noopener noreferrer" className="text-xs text-slate-300 underline underline-offset-4 mt-4 inline-block">Abrir livro de Cálculo I em PDF ↗</a></section>
         </div>
 
-        <section className="study-card p-5"><label htmlFor="module-notes" className="font-semibold text-sm flex items-center gap-2"><NotebookPen size={16} className="text-teal-300" />Meu caderno desta etapa</label><p className="text-xs text-slate-500 mt-2 mb-3">Anote dúvidas, erros recorrentes e o que revisar na próxima sessão.</p><textarea id="module-notes" value={typeof plan.notes[selected.id] === 'string' ? plan.notes[selected.id] : ''} onChange={e => setPlan(p => ({ ...p, notes: { ...p.notes, [selected.id]: e.target.value } }))} placeholder="Ex.: revisar sinais ao multiplicar pelo conjugado…" rows={4} className="w-full bg-[#0c131e] border border-slate-700 rounded-lg p-3 text-sm text-slate-200 placeholder:text-slate-600 focus:border-teal-500 outline-none resize-y" /><p className={`text-[11px] mt-2 ${saveError ? 'text-amber-300' : 'text-slate-500'}`} role="status">{saveError ? 'Não foi possível salvar. O armazenamento do navegador está indisponível.' : cloudStatus}</p></section>
+        <section className="study-card p-5"><label htmlFor="module-notes" className="font-semibold text-sm flex items-center gap-2"><NotebookPen size={16} className="text-teal-300" />Meu caderno desta etapa</label><p className="text-xs text-slate-500 mt-2 mb-3">Anote dúvidas, erros recorrentes e o que revisar na próxima sessão.</p><textarea id="module-notes" value={typeof plan.notes[selected.id] === 'string' ? plan.notes[selected.id] : ''} onChange={e => setPlan(p => ({ ...p, notes: { ...p.notes, [selected.id]: e.target.value } }))} placeholder="Ex.: revisar sinais ao multiplicar pelo conjugado…" rows={4} className="w-full bg-[#0c131e] border border-slate-700 rounded-lg p-3 text-sm text-slate-200 placeholder:text-slate-600 focus:border-teal-500 outline-none resize-y" /><p className={`text-[11px] mt-2 ${saveError ? 'text-amber-300' : 'text-slate-500'}`} role="status">{saveError ? 'Não foi possível salvar. O armazenamento do navegador está indisponível.' : cloudStatus}</p><NotesFeedback key={selected.id} moduleId={selected.id} signedIn={Boolean(currentUser)} notes={typeof plan.notes[selected.id] === 'string' ? plan.notes[selected.id] : ''} review={plan.noteReviews?.[selected.id]} onReview={review => setPlan(p => ({ ...p, noteReviews: { ...p.noteReviews, [selected.id]: review } }))} /></section>
         <p className="text-xs text-slate-500 leading-relaxed px-1">A sequência é uma proposta de estudo. O núcleo de Cálculo A acompanha os tópicos registrados no projeto; integrais, séries e cálculo multivariável são uma continuação complementar, sem indicação de cobrança na sua prova atual.</p>
       </div>
     </div>

@@ -6,6 +6,7 @@ import { ownsDocument } from './server/documentAccess.js';
 import { TutorMemory, buildTutorContents } from './server/tutorMemory.js';
 import { rateLimit, checkUpload, securityHeaders } from './server/security.js';
 import { parseDiagnosis } from './server/diagnosis.js';
+import { generateLesson, lessonTarget, reviewNotes } from './server/guidedLesson.js';
 import { FirestoreLearningStore, LearningStore, LearningStoreError } from './server/learningStore.js';
 import multer from 'multer';
 import path from 'path';
@@ -70,17 +71,36 @@ const upload = multer({
 const ai = options.ai || (process.env.GEMINI_API_KEY
   ? new GoogleGenAI({
       apiKey: process.env.GEMINI_API_KEY,
-      httpOptions: { timeout: 90000,
-        headers: {
-          'User-Agent': 'aistudio-build',
-        },
-      },
+      httpOptions: { timeout: 90000 },
     })
   : null);
 
 // ==========================================
 // API ROUTES: DOCUMENTS & S3 UPLOAD & OCR
 // ==========================================
+
+const lessonCache = new Map<string, Promise<Awaited<ReturnType<typeof generateLesson>>>>();
+app.post('/api/tutor/notes', async (req: Request, res: Response): Promise<void> => {
+  const { moduleId, notes } = req.body || {};
+  if (!lessonTarget(moduleId, 0) || typeof notes !== 'string' || !notes.trim() || notes.length > 6000) { res.status(400).json({ error: 'Escreva de 1 a 6000 caracteres e escolha um módulo válido.' }); return; }
+  if (!ai) { res.status(503).json({ error: 'A análise das anotações está indisponível. Configure a IA no servidor.' }); return; }
+  try { res.json({ feedback: await reviewNotes(ai, moduleId, notes), createdAt: new Date().toISOString() }); }
+  catch { res.status(503).json({ error: 'Não foi possível analisar agora. Suas anotações foram mantidas; tente novamente.' }); }
+});
+app.post('/api/tutor/lesson', async (req: Request, res: Response): Promise<void> => {
+  const { moduleId, lessonIndex } = req.body || {};
+  if (!lessonTarget(moduleId, lessonIndex)) { res.status(400).json({ error: 'Escolha uma etapa válida da trilha.' }); return; }
+  if (!ai) { res.status(503).json({ error: 'A geração de aulas está indisponível. Configure a IA no servidor e tente novamente.' }); return; }
+  const key = `${moduleId}:${lessonIndex}`;
+  try {
+    if (!lessonCache.has(key)) lessonCache.set(key, generateLesson(ai, moduleId, lessonIndex));
+    res.json(await lessonCache.get(key));
+  } catch (error) {
+    console.warn('Lesson generation failed:', { status: (error as any)?.status || 'invalid-lesson', validation: error instanceof Error && error.message.startsWith('A aula') ? error.message : undefined });
+    lessonCache.delete(key);
+    res.status(503).json({ error: 'Não foi possível preparar uma aula completa agora. Tente novamente em instantes.' });
+  }
+});
 
 /**
  * POST /api/documents/upload

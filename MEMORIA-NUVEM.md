@@ -52,3 +52,13 @@ O projeto anterior do AI Studio foi mantido. O UID do mesmo e-mail pode mudar en
 Novas análises incluem avaliações por módulo, com passos observados do estudante e referência à questão. O painel mostra conhecimento demonstrado, em desenvolvimento, revisão necessária e tópicos ainda não avaliados. A árvore exibe evidências da prova e a organização sugere prioridades. A avaliação não concede XP nem inventa tentativas ou percentuais de domínio. As evidências mais recentes de cada tópico prevalecem; ausência de resposta não apaga um diagnóstico anterior. Provas antigas sem avaliação estruturada precisam ser reenviadas para gerar esse novo diagnóstico.
 
 Validação: 39 testes automatizados, TypeScript e build de produção; chamada real ao Gemini com duas provas sintéticas confirmou acerto de fatoração, erro de limite e ausência de diagnóstico pessoal quando há apenas enunciados. Nenhum diagnóstico sintético foi salvo numa conta real.
+
+## Aulas guiadas e revisão do caderno
+
+Na organização, cada módulo permite escolher um assunto e gerar uma aula com IA. O conteúdo é exibido um passo de cada vez, com exemplo, pergunta de compreensão e resposta explicada inicialmente oculta. O plano preserva o assunto selecionado e o passo atual das oito aulas mais recentes; aulas fora desse limite podem ser geradas novamente. Não há concessão automática de XP ou marcação de domínio por leitura.
+
+O botão Analisar minhas anotações envia apenas o texto do caderno do módulo escolhido (até 6000 caracteres) para comentários da IA. O comentário fica salvo com a versão do texto analisado. Alterações posteriores são sinalizadas como análise de uma versão anterior. Conteúdo, etapas e comentários ficam no mesmo documento privado do plano, sujeito ao indicador de sincronização já existente. Não é necessário alterar as regras do Firestore.
+
+As duas APIs exigem token verificado e estão sujeitas aos limites do tutor. Aulas genéricas são reaproveitadas no servidor; anotações pessoais não entram em cache compartilhado. Uma falha transitória 503 na geração de aula permite uma única nova tentativa automática. Falhas persistentes são exibidas sem simular conteúdo.
+
+Validação das aulas: 44 testes automatizados no conjunto atual; TypeScript e build de produção. No localhost, a aula foi gerada por Gemini, avançou ao passo 2 e retornou nesse passo depois de recarregar. A revisão do caderno também foi gerada e recuperada da conta. O teste deixou uma anotação identificada como teste no módulo de álgebra. Saída estruturada: https://ai.google.dev/gemini-api/docs/structured-output .
